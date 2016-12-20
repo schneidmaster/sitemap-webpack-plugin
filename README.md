@@ -18,9 +18,11 @@ Add to your webpack config -- see below for an example. The plugin signature is:
 
 ### Options
 
+* `beautify` [boolean] default `true`
 * `lastMod` [boolean] default `false`
 * `priority` [number] default `null`
 * `changeFreq` [string] default `null`, list of applicable values based on [sitemaps.org](http://www.sitemaps.org/protocol.html)
+* `xslt` [string] default `null`, stylesheet url for the sitemap xml file based on [w3.org](https://www.w3.org/2002/xmlspec/)
 
 ```
 always
@@ -56,9 +58,11 @@ module.exports = {
     new SitemapPlugin(
       'https://mysite.com',paths, 'map.xml',
       {
+        beautify: true,
         lastMod: true,
         changeFreq: 'monthly',
         priority: 0.4,
+        xslt: '/url/to/xsl-stylesheet.xsl'
       }
     )
   ]
