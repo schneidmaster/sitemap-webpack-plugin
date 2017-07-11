@@ -2,14 +2,13 @@
   "name": "sitemap-webpack-plugin",
   "version": "0.3.0",
   "description": "Webpack plugin to generate a sitemap.",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "istanbul cover _mocha test -- --timeout 20000",
+    "build": "babel src --out-dir lib",
+    "prepublish": "npm run build",
+    "test": "istanbul cover _mocha -- --compilers js:babel-core/register",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "lint": "jshint ./**/*.js"
-  },
-  "jshintConfig": {
-    "expr": true
+    "lint": "eslint src/*.js 'test/**/*.js'"
   },
   "repository": {
     "type": "git",
@@ -26,14 +25,23 @@
   "bugs": {
     "url": "https://github.com/schneidmaster/sitemap-webpack-plugin/issues"
   },
+  "files": [
+    "lib/",
+    "src/",
+    "LICENSE.txt",
+    "package.json",
+    "README.md"
+  ],
   "homepage": "https://github.com/schneidmaster/sitemap-webpack-plugin#readme",
   "devDependencies": {
     "async": "^2.1.4",
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
     "chai": "^3.5.0",
     "coveralls": "^2.11.15",
+    "eslint": "^4.2.0",
     "glob": "^7.1.1",
-    "istanbul": "^0.4.5",
-    "jshint": "^2.9.4",
+    "istanbul": "^1.0.0-alpha.2",
     "mocha": "^3.2.0",
     "rimraf": "^2.5.4",
     "timecop": "git+https://github.com/jamesarosen/Timecop.js.git",

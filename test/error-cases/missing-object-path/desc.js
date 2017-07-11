@@ -1,1 +1,1 @@
-module.exports = 'Path object is missing path attribute';
+export default 'Path object is missing path attribute';

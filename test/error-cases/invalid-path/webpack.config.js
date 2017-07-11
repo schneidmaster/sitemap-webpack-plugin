@@ -1,9 +1,11 @@
-var SitemapPlugin = require('../../../');
+/* global __dirname */
 
-module.exports = {
+import SitemapPlugin from '../../../src/';
+
+export default {
   output: {
     filename: 'index.js',
-    path: __dirname + '/actual-output',
+    path: `${__dirname}/actual-output`,
     libraryTarget: 'umd'
   },
 

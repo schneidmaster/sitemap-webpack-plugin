@@ -1,6 +1,8 @@
-var SitemapPlugin = require('../../../');
+/* global __dirname */
 
-var paths = [
+import SitemapPlugin from '../../../src/';
+
+const paths = [
   {
     path: '/',
     lastMod: '2016-01-01',
@@ -17,10 +19,10 @@ var paths = [
   '/contact/'
 ];
 
-module.exports = {
+export default {
   output: {
     filename: 'index.js',
-    path: __dirname + '/actual-output',
+    path: `${__dirname}/actual-output`,
     libraryTarget: 'umd'
   },
 

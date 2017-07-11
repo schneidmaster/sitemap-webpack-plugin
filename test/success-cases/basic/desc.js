@@ -1,1 +1,1 @@
-module.exports = 'Basic sitemap';
+export default 'Basic sitemap';

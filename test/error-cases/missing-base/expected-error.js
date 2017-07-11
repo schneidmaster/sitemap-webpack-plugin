@@ -1,1 +1,1 @@
-module.exports = 'Error: Provided base URL is not a string';
+export default 'Error: Provided base URL is not a string';

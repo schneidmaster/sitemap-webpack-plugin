@@ -1,1 +1,1 @@
-module.exports = 'Error: Provided paths are not an array';
+export default 'Error: Provided paths are not an array';

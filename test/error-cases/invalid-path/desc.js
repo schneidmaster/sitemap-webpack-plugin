@@ -1,1 +1,1 @@
-module.exports = 'Invalid path in paths array';
+export default 'Invalid path in paths array';

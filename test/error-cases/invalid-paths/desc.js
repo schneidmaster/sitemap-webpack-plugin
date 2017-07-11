@@ -1,1 +1,1 @@
-module.exports = 'Invalid object passed for paths array';
+export default 'Invalid object passed for paths array';

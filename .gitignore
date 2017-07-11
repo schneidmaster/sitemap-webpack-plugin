@@ -1,3 +1,4 @@
-node_modules
 actual-output
-coverage
+/coverage
+/lib
+/node_modules

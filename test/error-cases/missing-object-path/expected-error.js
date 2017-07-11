@@ -1,1 +1,1 @@
-module.exports = 'Error: Path is not a string: [object Object]';
+export default 'Error: Path is not a string: [object Object]';

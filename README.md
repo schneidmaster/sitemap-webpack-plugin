@@ -29,17 +29,17 @@ Add to your webpack config -- see below for examples. The plugin signature is:
 ### webpack.config.js
 
 ```js
-var SitemapPlugin = require('sitemap-webpack-plugin');
+import SitemapPlugin from 'sitemap-webpack-plugin';
 
 /* basic paths -- directly compatible with static-site-generator-webpack-plugin */
-var paths = [
+const paths = [
   '/foo/',
   '/bar/'
 ];
 
 /* object paths -- more fine-grained but not directly compatible with static-site-generator-webpack-plugin */
 /* object paths must have a `path` attribute -- others are optional, and fall back to global config (if any) */
-var paths = [
+const paths = [
   {
     path: '/foo/',
     lastMod: '2015-01-04',
@@ -49,9 +49,9 @@ var paths = [
 ];
 
 /* you can also convert object paths back into static-site-generator-webpack-plugin compatible paths */
-var staticSiteGeneratorCompatiblePaths = paths.map(function(path) { return path.path });
+const staticSiteGeneratorCompatiblePaths = paths.map(function(path) { return path.path });
 
-module.exports = {
+export default {
 
   /* snip */
 

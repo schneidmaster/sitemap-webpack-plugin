@@ -1,34 +1,36 @@
-var expect = require('chai').expect;
-var webpack = require('webpack');
-var clean = require('rimraf');
-var getSubDirsSync = require('./utils/get-sub-dirs-sync');
-var directoryContains = require('./utils/directory-contains');
+/* global __dirname describe it beforeEach */
 
-var successCases = getSubDirsSync(__dirname + '/success-cases');
-var errorCases = getSubDirsSync(__dirname + '/error-cases');
+import { expect } from 'chai';
+import webpack from 'webpack';
+import clean from 'rimraf';
+import getSubDirsSync from './utils/get-sub-dirs-sync';
+import directoryContains from './utils/directory-contains';
 
-describe('Success cases', function() {
-  successCases.forEach(function(successCase) {
-    var desc = require('./success-cases/' + successCase + '/desc.js');
+const successCases = getSubDirsSync(`${__dirname}/success-cases`);
+const errorCases = getSubDirsSync(`${__dirname}/error-cases`);
 
-    describe(desc, function () {
-      beforeEach(function (done) {
-        clean(__dirname + '/success-cases/' + successCase + '/actual-output', done);
+describe('Success cases', () => {
+  successCases.forEach((successCase) => {
+    const desc = require(`./success-cases/${successCase}/desc.js`).default;
+
+    describe(desc, () => {
+      beforeEach( (done) => {
+        clean(`${__dirname}/success-cases/${successCase}/actual-output`, done);
       });
 
-      it('generates the expected sitemap', function (done) {
-        var webpackConfig = require('./success-cases/' + successCase + '/webpack.config.js');
+      it('generates the expected sitemap', (done) => {
+        const webpackConfig = require(`./success-cases/${successCase}/webpack.config.js`).default;
 
-        webpack(webpackConfig, function(err, stats) {
+        webpack(webpackConfig, (err) => {
           if(err) {
             return done(err);
           }
 
-          var caseDir = __dirname + '/success-cases/' + successCase;
-          var expectedDir = caseDir + '/expected-output/';
-          var actualDir = caseDir + '/actual-output/';
+          const caseDir = `${__dirname}/success-cases/${successCase}`;
+          const expectedDir = `${caseDir}/expected-output/`;
+          const actualDir = `${caseDir}/actual-output/`;
 
-          directoryContains(expectedDir, actualDir, function(err, result) {
+          directoryContains(expectedDir, actualDir, (err, result) => {
             if(err) {
               return done(err);
             }
@@ -42,21 +44,21 @@ describe('Success cases', function() {
   });
 });
 
-describe('Error cases', function() {
-  errorCases.forEach(function(errorCase) {
-    var desc = require('./error-cases/' + errorCase + '/desc.js');
+describe('Error cases', () => {
+  errorCases.forEach((errorCase) => {
+    const desc = require(`./error-cases/${errorCase}/desc.js`).default;
 
-    describe(desc, function () {
-      beforeEach(function (done) {
-        clean(__dirname + '/error-cases/' + errorCase + '/actual-output', done);
+    describe(desc, () => {
+      beforeEach( (done) => {
+        clean(`${__dirname}/error-cases/${errorCase}/actual-output`, done);
       });
 
-      it('generates the expected error', function (done) {
-        var webpackConfig = require('./error-cases/' + errorCase + '/webpack.config.js');
-        var expectedError = require('./error-cases/' + errorCase + '/expected-error.js');
+      it('generates the expected error', (done) => {
+        const webpackConfig = require(`./error-cases/${errorCase}/webpack.config.js`).default;
+        const expectedError = require(`./error-cases/${errorCase}/expected-error.js`).default;
 
-        webpack(webpackConfig, function(err, stats) {
-          var actualError = stats.compilation.errors[0].toString().split('\n')[0];
+        webpack(webpackConfig, (err, stats) => {
+          const actualError = stats.compilation.errors[0].toString().split('\n')[0];
           expect(actualError).to.include(expectedError);
           done();
         });

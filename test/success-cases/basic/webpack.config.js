@@ -1,10 +1,12 @@
-var SitemapPlugin = require('../../../');
-var StatsWriterPlugin = require('webpack-stats-plugin').StatsWriterPlugin;
+/* global __dirname */
 
-module.exports = {
+import SitemapPlugin from '../../../src/';
+import { StatsWriterPlugin } from 'webpack-stats-plugin';
+
+export default {
   output: {
     filename: 'index.js',
-    path: __dirname + '/actual-output',
+    path: `${__dirname}/actual-output`,
     libraryTarget: 'umd'
   },
 

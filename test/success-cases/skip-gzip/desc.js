@@ -1,1 +1,1 @@
-module.exports = 'Basic sitemap with gzip disabled';
+export default 'Basic sitemap with gzip disabled';
