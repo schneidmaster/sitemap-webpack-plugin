@@ -1,6 +1,6 @@
 {
   "name": "sitemap-webpack-plugin",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Webpack plugin to generate a sitemap.",
   "main": "lib/index.js",
   "scripts": {
