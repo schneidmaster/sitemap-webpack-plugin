@@ -18,6 +18,7 @@ export default class SitemapWebpackPlugin {
     this.changeFreq = options.changeFreq || null;
     this.priority = options.priority || null;
     this.skipGzip = options.skipGzip || false;
+    this.formatter = options.formatter || null;
   }
 
   generate() {
@@ -81,6 +82,11 @@ export default class SitemapWebpackPlugin {
 
     out += locs.join('');
     out += '</urlset>';
+
+    if(this.formatter !== null) {
+      out = this.formatter(out);
+    }
+
     return out;
   }
 

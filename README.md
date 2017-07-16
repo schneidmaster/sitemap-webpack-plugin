@@ -25,6 +25,7 @@ Add to your webpack config -- see below for examples. The plugin signature is:
 * `priority` (number) -- default `null` -- a `<priority>` to be set globally on all locations. Can be overridden by path-specific `priority`.
 * `changeFreq` (string) -- default `null` -- a `<changefreq>` to be set globally on all locations; list of applicable values based on [sitemaps.org](http://www.sitemaps.org/protocol.html): `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, `never`. Can be overridden by path-specific `changeFreq`.
 * `skipGzip` (boolean) -- default `false` -- whether to skip generating a gzipped `.xml.gz` sitemap. (By default, both an uncompressed and a compressed sitemap are generated -- the compressed version is generated at `sitemap.xml.gz`, or `[fileName].gz` if the `fileName` configuration option is set.)
+* `formatter` (function) -- default `null` -- an optional function to format the generated sitemap before it is emitted (for example, if you'd like to pretty-print the XML). The provided function must accept one argument (the unformatted XML) and return the formatted XML as a string. For an example of pretty-printing configuration, see the [formatted test](https://github.com/schneidmaster/sitemap-webpack-plugin/blob/master/test/success-cases/formatted/webpack.config.js).
 
 ### webpack.config.js
 

@@ -1,6 +1,6 @@
 {
   "name": "sitemap-webpack-plugin",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Webpack plugin to generate a sitemap.",
   "main": "lib/index.js",
   "scripts": {
@@ -43,6 +43,7 @@
     "glob": "^7.1.1",
     "istanbul": "^1.0.0-alpha.2",
     "mocha": "^3.2.0",
+    "pretty-data": "^0.40.0",
     "rimraf": "^2.5.4",
     "timekeeper": "^1.0.0",
     "webpack": "^1.12.14",
