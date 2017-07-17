@@ -1,6 +1,5 @@
-/* global __dirname describe it beforeEach */
+/* global __dirname describe it beforeEach expect */
 
-import { expect } from 'chai';
 import webpack from 'webpack';
 import clean from 'rimraf';
 import getSubDirsSync from './utils/get-sub-dirs-sync';
@@ -35,7 +34,7 @@ describe('Success cases', () => {
               return done(err);
             }
 
-            expect(result).to.be.ok;
+            expect(result).toEqual(true);
             done();
           });
         });
@@ -59,7 +58,7 @@ describe('Error cases', () => {
 
         webpack(webpackConfig, (err, stats) => {
           const actualError = stats.compilation.errors[0].toString().split('\n')[0];
-          expect(actualError).to.include(expectedError);
+          expect(actualError).toEqual(expectedError);
           done();
         });
       });
