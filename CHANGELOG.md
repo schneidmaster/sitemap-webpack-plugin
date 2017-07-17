@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+* Fix bug where [gzip error would hang compilation](https://github.com/schneidmaster/sitemap-webpack-plugin/pull/11) rather than reporting and continuing
+
 ## 0.5.0
 
 * Add optional [formatter configuration](https://github.com/schneidmaster/sitemap-webpack-plugin/pull/7)

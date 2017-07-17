@@ -112,7 +112,6 @@ export default class SitemapWebpackPlugin {
 
       if(sitemap !== null && this.skipGzip !== true) {
         zlib.gzip(sitemap, (err, compressed) => {
-          /* istanbul ignore if */
           if(err) {
             compilation.errors.push(err.stack);
           } else {
@@ -124,8 +123,8 @@ export default class SitemapWebpackPlugin {
                 return Buffer.byteLength(compressed);
               }
             };
-            callback();
           }
+          callback();
         });
       } else {
         callback();
