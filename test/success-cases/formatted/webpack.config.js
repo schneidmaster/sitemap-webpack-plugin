@@ -1,5 +1,3 @@
-/* global __dirname */
-
 import SitemapPlugin from '../../../src/';
 import { StatsWriterPlugin } from 'webpack-stats-plugin';
 import prettydata from 'pretty-data';
@@ -12,13 +10,13 @@ export default {
   output: {
     filename: 'index.js',
     path: `${__dirname}/actual-output`,
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
   },
 
   plugins: [
     new SitemapPlugin('https://mysite.com', ['/', '/about'], {
-      formatter: prettyPrint
+      formatter: prettyPrint,
     }),
-    new StatsWriterPlugin() // Causes the asset's `size` method to be called
-  ]
+    new StatsWriterPlugin(), // Causes the asset's `size` method to be called
+  ],
 };

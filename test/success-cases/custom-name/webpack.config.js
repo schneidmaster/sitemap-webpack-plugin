@@ -1,17 +1,15 @@
-/* global __dirname */
-
 import SitemapPlugin from '../../../src/';
 
 export default {
   output: {
     filename: 'index.js',
     path: `${__dirname}/actual-output`,
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
   },
 
   plugins: [
     new SitemapPlugin('https://mysite.com', ['/', '/about'], {
-      fileName: 'map.xml'
-    })
-  ]
+      fileName: 'map.xml',
+    }),
+  ],
 };

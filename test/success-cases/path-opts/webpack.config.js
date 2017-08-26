@@ -1,5 +1,3 @@
-/* global __dirname */
-
 import SitemapPlugin from '../../../src/';
 
 const paths = [
@@ -11,25 +9,25 @@ const paths = [
   },
   {
     path: '/about/',
-    priority: '0.4'
+    priority: '0.4',
   },
   {
-    path: '/faq/'
+    path: '/faq/',
   },
-  '/contact/'
+  '/contact/',
 ];
 
 export default {
   output: {
     filename: 'index.js',
     path: `${__dirname}/actual-output`,
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
   },
 
   plugins: [
     new SitemapPlugin('https://mysite.com', paths, {
       fileName: 'map.xml',
-      priority: '0.5'
-    })
-  ]
+      priority: '0.5',
+    }),
+  ],
 };

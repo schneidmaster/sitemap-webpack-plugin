@@ -1,5 +1,3 @@
-/* global Buffer */
-
 import zlib from 'zlib';
 import generateDate from './date';
 
@@ -10,7 +8,7 @@ export default class SitemapWebpackPlugin {
     this.paths = paths;
 
     // Set options
-    if(typeof(options) === 'undefined') {
+    if(typeof options === 'undefined') {
       options = {};
     }
     this.fileName = options.fileName || 'sitemap.xml';
@@ -23,7 +21,7 @@ export default class SitemapWebpackPlugin {
 
   generate() {
     // Validate configuration
-    if(typeof(this.base) !== 'string') {
+    if(typeof this.base !== 'string') {
       throw new Error('Provided base URL is not a string');
     } else if(this.base.substr(-1) === '/') {
       this.base = this.base.replace(/\/$/, '');
@@ -37,21 +35,21 @@ export default class SitemapWebpackPlugin {
     out += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
     const locs = this.paths.map((path) => {
-      if(typeof(path) === 'object') {
-        if(typeof(path.path) !== 'string') {
-          throw new Error('Path is not a string: ' + path);
+      if(typeof path === 'object') {
+        if(typeof path.path !== 'string') {
+          throw new Error(`Path is not a string: ${path}`);
         }
-      } else if(typeof(path) === 'string') {
+      } else if(typeof path === 'string') {
         path = { path: path };
       } else {
-        throw new Error('Path is not a string: ' + path);
+        throw new Error(`Path is not a string: ${path}`);
       }
 
       let loc = '<url>';
 
       let stringPath = path.path;
       if(stringPath.substr(0, 1) !== '/') {
-        stringPath = '/' + path.path;
+        stringPath = `/${path.path}`;
       }
       loc += `<loc>${this.base}${stringPath}</loc>`;
 
@@ -104,7 +102,7 @@ export default class SitemapWebpackPlugin {
           },
           size: () => {
             return Buffer.byteLength(sitemap, 'utf8');
-          }
+          },
         };
       } catch (err) {
         compilation.errors.push(err.stack);
@@ -121,7 +119,7 @@ export default class SitemapWebpackPlugin {
               },
               size: () => {
                 return Buffer.byteLength(compressed);
-              }
+              },
             };
           }
           callback();

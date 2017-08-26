@@ -1,4 +1,4 @@
-/* global __dirname describe it beforeEach expect */
+/* eslint-env jest */
 
 import webpack from 'webpack';
 import clean from 'rimraf';
@@ -13,7 +13,7 @@ describe('Success cases', () => {
     const desc = require(`./success-cases/${successCase}/desc.js`).default;
 
     describe(desc, () => {
-      beforeEach( (done) => {
+      beforeEach((done) => {
         clean(`${__dirname}/success-cases/${successCase}/actual-output`, done);
       });
 
@@ -48,7 +48,7 @@ describe('Error cases', () => {
     const desc = require(`./error-cases/${errorCase}/desc.js`).default;
 
     describe(desc, () => {
-      beforeEach( (done) => {
+      beforeEach((done) => {
         clean(`${__dirname}/error-cases/${errorCase}/actual-output`, done);
       });
 
@@ -56,7 +56,7 @@ describe('Error cases', () => {
         const webpackConfig = require(`./error-cases/${errorCase}/webpack.config.js`).default;
         const expectedError = require(`./error-cases/${errorCase}/expected-error.js`).default;
 
-        webpack(webpackConfig, (err, stats) => {
+        webpack(webpackConfig, (_err, stats) => {
           const actualError = stats.compilation.errors[0].toString().split('\n')[0];
           expect(actualError).toEqual(expectedError);
           done();
