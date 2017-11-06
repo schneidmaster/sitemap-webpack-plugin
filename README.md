@@ -32,6 +32,9 @@ Add to your webpack config -- see below for examples. The plugin signature is:
 ```js
 import SitemapPlugin from 'sitemap-webpack-plugin';
 
+// If you are not using babel, note that the plugin is exported on default so you will need e.g. 
+const SitemapWebpackPlugin = require('sitemap-webpack-plugin').default;
+
 /* basic paths -- directly compatible with static-site-generator-webpack-plugin */
 const paths = [
   '/foo/',
