@@ -1,6 +1,7 @@
 import SitemapPlugin from '../../../src/';
 
 export default {
+  entry: () => [],
   output: {
     filename: 'index.js',
     path: `${__dirname}/actual-output`,

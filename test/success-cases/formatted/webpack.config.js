@@ -7,6 +7,7 @@ const prettyPrint = (xml) => {
 };
 
 export default {
+  entry: () => [],
   output: {
     filename: 'index.js',
     path: `${__dirname}/actual-output`,

@@ -2,6 +2,7 @@ import SitemapPlugin from '../../../src/';
 import { StatsWriterPlugin } from 'webpack-stats-plugin';
 
 export default {
+  entry: () => [],
   output: {
     filename: 'index.js',
     path: `${__dirname}/actual-output`,
