@@ -8,6 +8,8 @@ Webpack plugin to generate a sitemap. Designed to work with [static-site-generat
 
     npm install sitemap-webpack-plugin --save-dev
 
+For webpack 4, use version 0.6 or greater. For webpack <= 3, use version 0.5.x.
+
 ## Usage
 
 Add to your webpack config -- see below for examples. The plugin signature is:

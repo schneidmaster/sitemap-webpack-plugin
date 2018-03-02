@@ -89,13 +89,13 @@ export default class SitemapWebpackPlugin {
   }
 
   apply(compiler) {
-    compiler.plugin('emit', (compilation, callback) => {
+    compiler.hooks.emit.tapAsync('sitemap-webpack-plugin', (compilation, callback) => {
       let sitemap = null;
 
       try {
         sitemap = this.generate();
 
-        compilation.fileDependencies.push(this.fileName);
+        compilation.fileDependencies.add(this.fileName);
         compilation.assets[this.fileName] = {
           source: () => {
             return sitemap;

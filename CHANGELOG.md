@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+* Upgrade for compatibility with webpack 4 (breaks compatibility with webpack <=3)
+
 ## 0.5.1
 
 * Fix bug where [gzip error would hang compilation](https://github.com/schneidmaster/sitemap-webpack-plugin/pull/11) rather than reporting and continuing
