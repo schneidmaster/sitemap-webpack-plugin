@@ -38,7 +38,8 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/",
       "/test/"
-    ]
+    ],
+    "testEnvironment": "node"
   },
   "devDependencies": {
     "async": "^2.1.4",
