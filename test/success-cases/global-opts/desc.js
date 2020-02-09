@@ -1,1 +1,1 @@
-export default 'Sitemap with options set globally';
+export default "Sitemap with options set globally";

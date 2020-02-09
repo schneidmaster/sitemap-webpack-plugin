@@ -1,1 +1,1 @@
-export default 'Sitemap with custom filename';
+export default "Sitemap with custom filename";
