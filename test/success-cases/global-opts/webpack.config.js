@@ -1,19 +1,19 @@
-import SitemapPlugin from '../../../src/';
+import SitemapPlugin from "../../../src/";
 
 export default {
   entry: () => [],
   output: {
-    filename: 'index.js',
+    filename: "index.js",
     path: `${__dirname}/actual-output`,
-    libraryTarget: 'umd',
+    libraryTarget: "umd"
   },
 
   plugins: [
-    new SitemapPlugin('https://mysite.com', ['/', '/about'], {
-      fileName: 'sitemap.xml',
+    new SitemapPlugin("https://mysite.com", ["/", "/about"], {
+      fileName: "sitemap.xml",
       lastMod: true,
-      changeFreq: 'monthly',
-      priority: '0.4',
-    }),
-  ],
+      changeFreq: "monthly",
+      priority: "0.4"
+    })
+  ]
 };

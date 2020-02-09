@@ -1,1 +1,1 @@
-export default 'Basic sitemap with formatted output';
+export default "Basic sitemap with formatted output";

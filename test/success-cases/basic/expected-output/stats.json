@@ -1,3 +1,5 @@
 {
-  "assetsByChunkName": {}
+  "assetsByChunkName": {
+    "main": "index.js"
+  }
 }

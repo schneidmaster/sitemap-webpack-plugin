@@ -1,1 +1,1 @@
-export default 'Base URL is not a string';
+export default "Base URL is not a string";

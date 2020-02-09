@@ -1,27 +1,27 @@
-import glob from 'glob';
-import async from 'async';
-import fs from 'fs';
-import path from 'path';
-import zlib from 'zlib';
-import generateDate from '../../src/date';
+import glob from "glob";
+import async from "async";
+import fs from "fs";
+import path from "path";
+import zlib from "zlib";
+import generateDate from "../../src/date";
 
 const readFile = (path, done) => {
-  if(path.endsWith('.gz')) {
+  if (path.endsWith(".gz")) {
     return fs.readFile(path, (err, contents) => {
-      if(err) {
+      if (err) {
         done(err);
       } else {
         zlib.gunzip(contents, (err, data) => {
-          if(err) {
+          if (err) {
             done(err);
           } else {
-            done(null, data.toString('utf8'));
+            done(null, data.toString("utf8"));
           }
         });
       }
     });
   } else {
-    return fs.readFile(path, 'utf8', done);
+    return fs.readFile(path, "utf8", done);
   }
 };
 
@@ -41,22 +41,27 @@ export default (referenceDir, targetDir, done) => {
     });
   };
 
-  glob('**/*', { cwd: referenceDir, nodir: true }, (err, referenceFiles) => {
+  glob("**/*", { cwd: referenceDir, nodir: true }, (err, referenceFiles) => {
     if (err) {
       return done(err);
     }
 
-    glob('**/*', { cwd: targetDir, nodir: true }, (err, targetFiles) => {
+    glob("**/*", { cwd: targetDir, nodir: true }, (err, targetFiles) => {
       if (err) {
         return done(err);
       }
 
-      async.map(referenceFiles.concat(targetFiles), compareFile, (err, results) => {
+      async.map(referenceFiles, compareFile, (err, results) => {
         if (err) {
           return done(err);
         }
 
-        done(null, !results.some((result) => { return !result; }));
+        done(
+          null,
+          !results.some(result => {
+            return !result;
+          })
+        );
       });
     });
   });

@@ -1,16 +1,16 @@
-import SitemapPlugin from '../../../src/';
+import SitemapPlugin from "../../../src/";
 
 export default {
   entry: () => [],
   output: {
-    filename: 'index.js',
+    filename: "index.js",
     path: `${__dirname}/actual-output`,
-    libraryTarget: 'umd',
+    libraryTarget: "umd"
   },
 
   plugins: [
-    new SitemapPlugin('https://mysite.com', ['/', '/about'], {
-      skipGzip: true,
-    }),
-  ],
+    new SitemapPlugin("https://mysite.com", ["/", "/about"], {
+      skipGzip: true
+    })
+  ]
 };
