@@ -1,5 +1,16 @@
+import { SitemapStream, streamToPromise } from "sitemap";
 import zlib from "zlib";
 import generateDate from "./date";
+
+const normalizeOptions = (options, keys) => {
+  keys.forEach(key => {
+    if (options[key]) {
+      options[key.toLowerCase()] = options[key];
+      delete options[key];
+    }
+  });
+  return options;
+};
 
 export default class SitemapWebpackPlugin {
   constructor(base, paths, options) {
@@ -11,15 +22,29 @@ export default class SitemapWebpackPlugin {
     if (typeof options === "undefined") {
       options = {};
     }
-    this.fileName = options.fileName || "sitemap.xml";
-    this.lastMod = options.lastMod || false;
-    this.changeFreq = options.changeFreq || null;
-    this.priority = options.priority || null;
-    this.skipGzip = options.skipGzip || false;
-    this.formatter = options.formatter || null;
+    options = normalizeOptions(options, ["lastMod", "changeFreq"]);
+
+    const {
+      fileName,
+      skipGzip,
+      formatter,
+      lastmod,
+      changefreq,
+      priority,
+      ...rest
+    } = options;
+    this.fileName = fileName || "sitemap.xml";
+    this.skipGzip = skipGzip || false;
+    this.formatter = formatter || null;
+    if (lastmod) {
+      this.lastmod = generateDate();
+    }
+    this.changefreq = changefreq;
+    this.priority = priority;
+    this.options = rest;
   }
 
-  generate() {
+  async generate() {
     // Validate configuration
     if (typeof this.base !== "string") {
       throw new Error("Provided base URL is not a string");
@@ -30,14 +55,16 @@ export default class SitemapWebpackPlugin {
       throw new Error("Provided paths are not an array");
     }
 
-    // Create sitemap from paths
-    let out = '<?xml version="1.0" encoding="UTF-8"?>';
-    out += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+    const sitemap = new SitemapStream({ hostname: this.base });
 
-    const locs = this.paths.map(path => {
+    this.paths.forEach(path => {
       if (typeof path === "object") {
         if (typeof path.path !== "string") {
           throw new Error(`Path is not a string: ${path}`);
+        } else {
+          // Clone the object so we can mutate it below without
+          // potentially messing up the original we were given.
+          path = { ...path };
         }
       } else if (typeof path === "string") {
         path = { path: path };
@@ -45,57 +72,36 @@ export default class SitemapWebpackPlugin {
         throw new Error(`Path is not a string: ${path}`);
       }
 
-      let loc = "<url>";
+      path = normalizeOptions(path, ["changeFreq", "lastMod"]);
+      const { path: url, changefreq, lastmod, priority, ...rest } = path;
 
-      let stringPath = path.path;
-      if (stringPath.substr(0, 1) !== "/") {
-        stringPath = `/${path.path}`;
-      }
-      loc += `<loc>${this.base}${stringPath}</loc>`;
-
-      // Add loc lastMod or default if set.
-      if (path.lastMod) {
-        loc += `<lastmod>${path.lastMod}</lastmod>`;
-      } else if (this.lastMod) {
-        loc += `<lastmod>${generateDate()}</lastmod>`;
-      }
-
-      // Add loc changeFreq or default if set.
-      if (path.changeFreq) {
-        loc += `<changefreq>${path.changeFreq}</changefreq>`;
-      } else if (this.changeFreq) {
-        loc += `<changefreq>${this.changeFreq}</changefreq>`;
-      }
-
-      // Add loc priority or default if set.
-      if (path.priority) {
-        loc += `<priority>${path.priority}</priority>`;
-      } else if (this.priority) {
-        loc += `<priority>${this.priority}</priority>`;
-      }
-
-      loc += "</url>";
-      return loc;
+      sitemap.write({
+        ...this.options,
+        ...rest,
+        url,
+        changefreq: changefreq || this.changefreq,
+        lastmod: lastmod || this.lastmod,
+        priority: priority || this.priority
+      });
     });
 
-    out += locs.join("");
-    out += "</urlset>";
-
+    sitemap.end();
+    let output = await streamToPromise(sitemap);
+    output = output.toString();
     if (this.formatter !== null) {
-      out = this.formatter(out);
+      output = this.formatter(output);
     }
-
-    return out;
+    return output;
   }
 
   apply(compiler) {
     compiler.hooks.emit.tapAsync(
       "sitemap-webpack-plugin",
-      (compilation, callback) => {
+      async (compilation, callback) => {
         let sitemap = null;
 
         try {
-          sitemap = this.generate();
+          sitemap = await this.generate();
 
           compilation.fileDependencies.add(this.fileName);
           compilation.assets[this.fileName] = {

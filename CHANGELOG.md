@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+
+* Switched to [sitemap](https://www.npmjs.com/package/sitemap) package for generating sitemaps under the hood, which provides more configuration options
+
 ## 0.6.0
 
 * Upgrade for compatibility with webpack 4 (breaks compatibility with webpack <=3)
