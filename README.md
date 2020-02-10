@@ -23,18 +23,19 @@ Add to your webpack config -- see below for examples. The plugin signature is:
 ### Options
 
 * `fileName` (string) -- default `sitemap.xml` -- name of the output file
-* `lastMod` (boolean) -- default `false` -- whether to include the current date as the `<lastmod>`. Can be overridden by path-specific `lastMod`.
-* `priority` (number) -- default `null` -- a `<priority>` to be set globally on all locations. Can be overridden by path-specific `priority`.
-* `changeFreq` (string) -- default `null` -- a `<changefreq>` to be set globally on all locations; list of applicable values based on [sitemaps.org](http://www.sitemaps.org/protocol.html): `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, `never`. Can be overridden by path-specific `changeFreq`.
 * `skipGzip` (boolean) -- default `false` -- whether to skip generating a gzipped `.xml.gz` sitemap. (By default, both an uncompressed and a compressed sitemap are generated -- the compressed version is generated at `sitemap.xml.gz`, or `[fileName].gz` if the `fileName` configuration option is set.)
 * `formatter` (function) -- default `null` -- an optional function to format the generated sitemap before it is emitted (for example, if you'd like to pretty-print the XML). The provided function must accept one argument (the unformatted XML) and return the formatted XML as a string. For an example of pretty-printing configuration, see the [formatted test](https://github.com/schneidmaster/sitemap-webpack-plugin/blob/master/test/success-cases/formatted/webpack.config.js).
+* `lastmod` (boolean) -- default `false` -- whether to include the current date as the `<lastmod>`. Can be overridden by path-specific `lastmod`.
+* `priority` (number) -- default `null` -- a `<priority>` to be set globally on all locations. Can be overridden by path-specific `priority`.
+* `changefreq` (string) -- default `null` -- a `<changefreq>` to be set globally on all locations; list of applicable values based on [sitemaps.org](http://www.sitemaps.org/protocol.html): `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, `never`. Can be overridden by path-specific `changefreq`.
+* This library uses the [sitemap](https://www.npmjs.com/package/sitemap) package under the hood, so you can also provide [any other options](https://www.npmjs.com/package/sitemap#example-of-most-of-the-options-you-can-use-for-sitemap) that `sitemap` supports.
 
 ### webpack.config.js
 
 ```js
 import SitemapPlugin from 'sitemap-webpack-plugin';
 
-// If you are not using babel, note that the plugin is exported on default so you will need e.g. 
+// If you are not using babel, note that the plugin is exported on default so you will need e.g.
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
 
 /* basic paths -- directly compatible with static-site-generator-webpack-plugin */

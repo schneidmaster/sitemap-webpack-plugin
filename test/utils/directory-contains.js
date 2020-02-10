@@ -3,7 +3,6 @@ import async from "async";
 import fs from "fs";
 import path from "path";
 import zlib from "zlib";
-import generateDate from "../../src/date";
 
 const readFile = (path, done) => {
   if (path.endsWith(".gz")) {
@@ -35,9 +34,7 @@ export default (referenceDir, targetDir, done) => {
         return done(err);
       }
 
-      const referenceContent = results[0].replace(/\$DATE\$/g, generateDate());
-      const targetContent = results[1];
-      done(null, referenceContent === targetContent);
+      done(null, results[0] === results[1]);
     });
   };
 
@@ -51,18 +48,22 @@ export default (referenceDir, targetDir, done) => {
         return done(err);
       }
 
-      async.map(referenceFiles, compareFile, (err, results) => {
-        if (err) {
-          return done(err);
-        }
+      async.map(
+        referenceFiles.concat(targetFiles).filter(file => file !== "index.js"),
+        compareFile,
+        (err, results) => {
+          if (err) {
+            return done(err);
+          }
 
-        done(
-          null,
-          !results.some(result => {
-            return !result;
-          })
-        );
-      });
+          done(
+            null,
+            !results.some(result => {
+              return !result;
+            })
+          );
+        }
+      );
     });
   });
 };
