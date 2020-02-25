@@ -22,22 +22,31 @@ export default class SitemapWebpackPlugin {
     if (typeof options === "undefined") {
       options = {};
     }
-    options = normalizeOptions(options, ["lastMod", "changeFreq"]);
+    options = normalizeOptions(options, [
+      "changeFreq",
+      "fileName",
+      "lastMod",
+      "skipGzip"
+    ]);
 
     const {
-      fileName,
-      skipGzip,
+      filename,
+      skipgzip,
       formatter,
       lastmod,
       changefreq,
       priority,
       ...rest
     } = options;
-    this.fileName = fileName || "sitemap.xml";
-    this.skipGzip = skipGzip || false;
+    this.filename = filename || "sitemap.xml";
+    this.skipgzip = skipgzip || false;
     this.formatter = formatter || null;
     if (lastmod) {
-      this.lastmod = generateDate();
+      if (typeof lastmod === "string") {
+        this.lastmod = lastmod;
+      } else {
+        this.lastmod = generateDate();
+      }
     }
     this.changefreq = changefreq;
     this.priority = priority;
@@ -103,8 +112,8 @@ export default class SitemapWebpackPlugin {
         try {
           sitemap = await this.generate();
 
-          compilation.fileDependencies.add(this.fileName);
-          compilation.assets[this.fileName] = {
+          compilation.fileDependencies.add(this.filename);
+          compilation.assets[this.filename] = {
             source: () => {
               return sitemap;
             },
@@ -116,12 +125,12 @@ export default class SitemapWebpackPlugin {
           compilation.errors.push(err.stack);
         }
 
-        if (sitemap !== null && this.skipGzip !== true) {
+        if (sitemap !== null && this.skipgzip !== true) {
           zlib.gzip(sitemap, (err, compressed) => {
             if (err) {
               compilation.errors.push(err.stack);
             } else {
-              compilation.assets[`${this.fileName}.gz`] = {
+              compilation.assets[`${this.filename}.gz`] = {
                 source: () => {
                   return compressed;
                 },
