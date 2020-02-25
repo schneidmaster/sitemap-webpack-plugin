@@ -26,10 +26,10 @@ The following options may be provided in the top-level `options` argument to the
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| `fileName` | `string` | `sitemap.xml` | Name of the sitemap file emitted to your build output |
-| `skipGzip` | `boolean` | `false` | Whether to skip generating a gzipped `.xml.gz` sitemap. (By default, both an uncompressed and a compressed sitemap are generated -- the compressed version is generated at `sitemap.xml.gz`, or `[fileName].gz` if the `fileName` configuration option is set.) |
+| `filename` | `string` | `sitemap.xml` | Name of the sitemap file emitted to your build output |
+| `skipgzip` | `boolean` | `false` | Whether to skip generating a gzipped `.xml.gz` sitemap. (By default, both an uncompressed and a compressed sitemap are generated -- the compressed version is generated at `sitemap.xml.gz`, or `[filename].gz` if the `filename` configuration option is set.) |
 | `formatter` | `function` | `undefined` | An optional function to format the generated sitemap before it is emitted (for example, if you'd like to pretty-print the XML). The provided function must accept one argument (the unformatted XML) and return the formatted XML as a string. For an example of pretty-printing configuration, see the [formatted test](https://github.com/schneidmaster/sitemap-webpack-plugin/blob/master/test/success-cases/formatted/webpack.config.js). |
-| `lastmod` | `boolean` | `false` | Whether to include the current date as the `<lastmod>` on all paths. Can be overridden by path-specific `lastmod` setting. |
+| `lastmod` | `string` / `boolean` | `false` | The date value for `lastmod` on all paths. Can be overridden by path-specific `lastmod` setting. If set to `true`, the current date will be used for all paths; otherwise, the string value provided will be used. |
 | `priority` | `number` | `undefined` | A `<priority>` to be set globally on all locations. Can be overridden by path-specific `priority`. |
 | `changefreq` | `string` | `undefined` | A `<changefreq>` to be set globally on all locations; list of applicable values based on [sitemaps.org](http://www.sitemaps.org/protocol.html): `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, `never`. Can be overridden by path-specific `changefreq`. |
 
@@ -77,21 +77,21 @@ export default {
   // With custom output filename
   plugins: [
     new SitemapPlugin('https://mysite.com', paths, {
-      fileName: 'map.xml'
+      filename: 'map.xml'
     })
   ]
 
   // Skip generating a gzipped version of the sitemap
   plugins: [
     new SitemapPlugin('https://mysite.com', paths, {
-      skipGzip: true
+      skipgzip: true
     })
   ]
 
   // With global options
   plugins: [
     new SitemapPlugin('https://mysite.com', paths, {
-      fileName: 'map.xml',
+      filename: 'map.xml',
       lastmod: true,
       changefreq: 'monthly',
       priority: '0.4'

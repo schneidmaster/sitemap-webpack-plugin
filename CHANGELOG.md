@@ -3,6 +3,8 @@
 ## 0.7.1
 
 * Updated and expanded README documentation
+* Standardize on non-camel-cased configuration values for consistency with underlying `sitemap` package (camel-cased values are still supported for backwards compatibility)
+* Allow providing a top-level date string for `lastmod` (if a boolean `true` is provided, the current date will still be used for backwards compatibility)
 
 ## 0.7.0
 
