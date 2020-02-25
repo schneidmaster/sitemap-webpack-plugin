@@ -29,13 +29,13 @@ The following options may be provided in the top-level `options` argument to the
 | `filename` | `string` | `sitemap.xml` | Name of the sitemap file emitted to your build output |
 | `skipgzip` | `boolean` | `false` | Whether to skip generating a gzipped `.xml.gz` sitemap. (By default, both an uncompressed and a compressed sitemap are generated -- the compressed version is generated at `sitemap.xml.gz`, or `[filename].gz` if the `filename` configuration option is set.) |
 | `formatter` | `function` | `undefined` | An optional function to format the generated sitemap before it is emitted (for example, if you'd like to pretty-print the XML). The provided function must accept one argument (the unformatted XML) and return the formatted XML as a string. For an example of pretty-printing configuration, see the [formatted test](https://github.com/schneidmaster/sitemap-webpack-plugin/blob/master/test/success-cases/formatted/webpack.config.js). |
-| `lastmod` | `string` / `boolean` | `false` | The date value for `lastmod` on all paths. Can be overridden by path-specific `lastmod` setting. If set to `true`, the current date will be used for all paths; otherwise, the string value provided will be used. |
+| `lastmod` | `string` / `boolean` | `false` | The date value for `<lastmod>` on all paths. Can be overridden by path-specific `lastmod` setting. If set to boolean `true`, the current date will be used for all paths; otherwise, the provided date string will be used. |
 | `priority` | `number` | `undefined` | A `<priority>` to be set globally on all locations. Can be overridden by path-specific `priority`. |
 | `changefreq` | `string` | `undefined` | A `<changefreq>` to be set globally on all locations; list of applicable values based on [sitemaps.org](http://www.sitemaps.org/protocol.html): `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, `never`. Can be overridden by path-specific `changefreq`. |
 
 ### Path-specific options
 
-If you choose to provide the paths as an array of objects, the following options may be provided on each path object. This library uses the [sitemap](https://www.npmjs.com/package/sitemap) package under the hood, so you can also provide [any other options](https://www.npmjs.com/package/sitemap#example-of-most-of-the-options-you-can-use-for-sitemap) that `sitemap` supports.
+If you choose to provide the paths as an array of objects, the following attributes may be set on each path object. This library uses the [sitemap](https://www.npmjs.com/package/sitemap) package under the hood, so you can also provide [any other options](https://www.npmjs.com/package/sitemap#example-of-most-of-the-options-you-can-use-for-sitemap) that `sitemap` supports.
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -44,7 +44,7 @@ If you choose to provide the paths as an array of objects, the following options
 | `priority` | `number` | `undefined` | A numerical `<priority>` to be set on the path. |
 | `changefreq` | `string` | `undefined` | The `<changefreq>` to be set on the path; list of applicable values based on [sitemaps.org](http://www.sitemaps.org/protocol.html): `always`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`, `never`. |
 
-### webpack.config.js
+### Example webpack.config.js
 
 ```js
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
@@ -102,8 +102,12 @@ export default {
 
 ## Contributing
 
-1. Fork it (https://github.com/schneidmaster/sitemap-webpack-plugin/fork)
+1. Fork the repository (https://github.com/schneidmaster/sitemap-webpack-plugin/fork)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+5. Create a new pull request
+
+## License
+
+MIT
