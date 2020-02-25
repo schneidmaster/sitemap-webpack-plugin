@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1
+
+* Updated and expanded README documentation
+
 ## 0.7.0
 
 * Switched to [sitemap](https://www.npmjs.com/package/sitemap) package for generating sitemaps under the hood, which provides more configuration options
