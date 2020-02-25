@@ -64,6 +64,12 @@ const paths = [
     lastmod: '2015-01-04',
     priority: '0.8',
     changefreq: 'monthly'
+  },
+  {
+    path: '/bar/',
+    lastmod: '2018-02-05',
+    priority: '0.5',
+    changefreq: 'yearly'
   }
 ];
 
