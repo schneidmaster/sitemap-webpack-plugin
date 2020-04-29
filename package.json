@@ -68,5 +68,8 @@
   },
   "dependencies": {
     "sitemap": "^5.1.0"
+  },
+  "resolutions": {
+    "kind-of": "^6.0.3"
   }
 }
