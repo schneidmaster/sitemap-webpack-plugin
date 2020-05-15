@@ -26,29 +26,35 @@ describe("Success cases", () => {
         clean(`${__dirname}/success-cases/${successCase}/actual-output`, done);
       });
 
-      it("generates the expected sitemap", done => {
-        const webpackConfig = require(`./success-cases/${successCase}/webpack.config.js`)
-          .default;
+      const timeout = successCase === "many-paths" ? 40000 : 5000;
 
-        webpack(webpackConfig, err => {
-          if (err) {
-            return done(err);
-          }
+      it(
+        "generates the expected sitemap",
+        done => {
+          const webpackConfig = require(`./success-cases/${successCase}/webpack.config.js`)
+            .default;
 
-          const caseDir = `${__dirname}/success-cases/${successCase}`;
-          const expectedDir = `${caseDir}/expected-output/`;
-          const actualDir = `${caseDir}/actual-output/`;
-
-          directoryContains(expectedDir, actualDir, (err, result) => {
+          webpack(webpackConfig, err => {
             if (err) {
               return done(err);
             }
 
-            expect(result).toEqual(true);
-            done();
+            const caseDir = `${__dirname}/success-cases/${successCase}`;
+            const expectedDir = `${caseDir}/expected-output/`;
+            const actualDir = `${caseDir}/actual-output/`;
+
+            directoryContains(expectedDir, actualDir, (err, result) => {
+              if (err) {
+                return done(err);
+              }
+
+              expect(result).toEqual(true);
+              done();
+            });
           });
-        });
-      });
+        },
+        timeout
+      );
     });
   });
 });

@@ -1,4 +1,4 @@
-import { SitemapStream, streamToPromise } from "sitemap";
+import { SitemapStream, SitemapIndexStream, streamToPromise } from "sitemap";
 import zlib from "zlib";
 import generateDate from "./date";
 
@@ -38,7 +38,7 @@ export default class SitemapWebpackPlugin {
       priority,
       ...rest
     } = options;
-    this.filename = filename || "sitemap.xml";
+    this.filename = filename ? filename.replace(/\.xml$/, "") : "sitemap";
     this.skipgzip = skipgzip || false;
     this.formatter = formatter || null;
     if (lastmod) {
@@ -53,20 +53,10 @@ export default class SitemapWebpackPlugin {
     this.options = rest;
   }
 
-  async generate() {
-    // Validate configuration
-    if (typeof this.base !== "string") {
-      throw new Error("Provided base URL is not a string");
-    } else if (this.base.substr(-1) === "/") {
-      this.base = this.base.replace(/\/$/, "");
-    }
-    if (!Array.isArray(this.paths)) {
-      throw new Error("Provided paths are not an array");
-    }
-
+  generateSitemap(paths) {
     const sitemap = new SitemapStream({ hostname: this.base });
 
-    this.paths.forEach(path => {
+    paths.forEach(path => {
       if (typeof path === "object") {
         if (typeof path.path !== "string") {
           throw new Error(`Path is not a string: ${path}`);
@@ -84,62 +74,133 @@ export default class SitemapWebpackPlugin {
       path = normalizeOptions(path, ["changeFreq", "lastMod"]);
       const { path: url, changefreq, lastmod, priority, ...rest } = path;
 
-      sitemap.write({
+      const sitemapOptions = {
         ...this.options,
         ...rest,
-        url,
-        changefreq: changefreq || this.changefreq,
-        lastmod: lastmod || this.lastmod,
-        priority: priority || this.priority
-      });
+        url
+      };
+      if (changefreq || this.changefreq) {
+        sitemapOptions.changefreq = changefreq || this.changefreq;
+      }
+      if (lastmod || this.lastmod) {
+        sitemapOptions.lastmod = lastmod || this.lastmod;
+      }
+      if (priority || this.priority) {
+        sitemapOptions.priority = parseFloat(priority || this.priority);
+      }
+      sitemap.write(sitemapOptions);
     });
 
     sitemap.end();
-    let output = await streamToPromise(sitemap);
-    output = output.toString();
+    return this.sitemapStreamToString(sitemap);
+  }
+
+  async sitemapStreamToString(sitemapStream) {
+    let sitemap = await streamToPromise(sitemapStream);
+
+    sitemap = sitemap.toString();
     if (this.formatter !== null) {
-      output = this.formatter(output);
+      sitemap = this.formatter(sitemap);
     }
-    return output;
+
+    return sitemap;
+  }
+
+  async generate() {
+    // Validate configuration
+    if (typeof this.base !== "string") {
+      throw new Error("Provided base URL is not a string");
+    } else if (this.base.substr(-1) === "/") {
+      this.base = this.base.replace(/\/$/, "");
+    }
+    if (!Array.isArray(this.paths)) {
+      throw new Error("Provided paths are not an array");
+    }
+
+    if (this.paths.length <= 50000) {
+      const sitemap = await this.generateSitemap(this.paths);
+      return [sitemap];
+    } else {
+      const output = [];
+      const indexExt = this.skipgzip ? ".xml" : ".xml.gz";
+
+      const sitemapIndex = new SitemapIndexStream();
+      let index = 1;
+
+      for (let i = 0; i < this.paths.length; i += 45000) {
+        const sitemap = await this.generateSitemap(
+          this.paths.slice(i, i + 45000)
+        );
+        output.push(sitemap);
+
+        sitemapIndex.write(
+          `${this.base}/${this.filename}-${index}.${indexExt}`
+        );
+        index++;
+      }
+
+      sitemapIndex.end();
+      const sitemapIndexStr = await this.sitemapStreamToString(sitemapIndex);
+      output.unshift(sitemapIndexStr);
+
+      return output;
+    }
   }
 
   apply(compiler) {
     compiler.hooks.emit.tapAsync(
       "sitemap-webpack-plugin",
       async (compilation, callback) => {
-        let sitemap = null;
+        let sitemaps = null;
 
         try {
-          sitemap = await this.generate();
+          sitemaps = await this.generate();
 
-          compilation.fileDependencies.add(this.filename);
-          compilation.assets[this.filename] = {
-            source: () => {
-              return sitemap;
-            },
-            size: () => {
-              return Buffer.byteLength(sitemap, "utf8");
-            }
-          };
+          sitemaps.forEach((sitemap, idx) => {
+            const sitemapFilename =
+              idx === 0
+                ? `${this.filename}.xml`
+                : `${this.filename}-${idx}.xml`;
+            compilation.fileDependencies.add(sitemapFilename);
+            compilation.assets[sitemapFilename] = {
+              source: () => {
+                return sitemap;
+              },
+              size: () => {
+                return Buffer.byteLength(sitemap, "utf8");
+              }
+            };
+          });
         } catch (err) {
           compilation.errors.push(err.stack);
         }
 
-        if (sitemap !== null && this.skipgzip !== true) {
-          zlib.gzip(sitemap, (err, compressed) => {
-            if (err) {
-              compilation.errors.push(err.stack);
-            } else {
-              compilation.assets[`${this.filename}.gz`] = {
-                source: () => {
-                  return compressed;
-                },
-                size: () => {
-                  return Buffer.byteLength(compressed);
-                }
-              };
-            }
-            callback();
+        if (sitemaps !== null && this.skipgzip !== true) {
+          let sitemapsZipped = 0;
+          sitemaps.forEach((sitemap, idx) => {
+            const sitemapFilename =
+              idx === 0
+                ? `${this.filename}.xml.gz`
+                : `${this.filename}-${idx}.xml.gz`;
+            zlib.gzip(sitemap, (err, compressed) => {
+              if (err) {
+                compilation.errors.push(err.stack);
+              } else {
+                compilation.assets[sitemapFilename] = {
+                  source: () => {
+                    return compressed;
+                  },
+                  size: () => {
+                    return Buffer.byteLength(compressed);
+                  }
+                };
+              }
+
+              sitemapsZipped++;
+              if (sitemapsZipped === sitemaps.length) {
+                callback();
+              }
+            });
           });
         } else {
           callback();
