@@ -1,5 +1,4 @@
 import { SitemapStream, SitemapIndexStream } from "sitemap";
-import streamToString from "stream-to-string";
 import { RawSource } from "webpack-sources";
 import zlib from "zlib";
 import generateDate from "./date";
@@ -12,6 +11,20 @@ const normalizeOptions = (options, keys) => {
     }
   });
   return options;
+};
+
+const streamToString = stream => {
+  let str = "";
+
+  return new Promise(resolve => {
+    stream.on("data", data => {
+      str += data.toString();
+    });
+
+    stream.on("end", () => {
+      resolve(str);
+    });
+  });
 };
 
 export default class SitemapWebpackPlugin {

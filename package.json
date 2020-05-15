@@ -68,7 +68,6 @@
   },
   "dependencies": {
     "sitemap": "^6.0.0",
-    "stream-to-string": "^1.2.0",
     "webpack-sources": "^1.4.3"
   },
   "resolutions": {
