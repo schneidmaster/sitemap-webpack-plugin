@@ -1,4 +1,6 @@
-import { SitemapStream, SitemapIndexStream, streamToPromise } from "sitemap";
+import { SitemapStream, SitemapIndexStream } from "sitemap";
+import streamToString from "stream-to-string";
+import { RawSource } from "webpack-sources";
 import zlib from "zlib";
 import generateDate from "./date";
 
@@ -96,9 +98,8 @@ export default class SitemapWebpackPlugin {
   }
 
   async sitemapStreamToString(sitemapStream) {
-    let sitemap = await streamToPromise(sitemapStream);
+    let sitemap = await streamToString(sitemapStream);
 
-    sitemap = sitemap.toString();
     if (this.formatter !== null) {
       sitemap = this.formatter(sitemap);
     }
@@ -162,14 +163,7 @@ export default class SitemapWebpackPlugin {
                 ? `${this.filename}.xml`
                 : `${this.filename}-${idx}.xml`;
             compilation.fileDependencies.add(sitemapFilename);
-            compilation.assets[sitemapFilename] = {
-              source: () => {
-                return sitemap;
-              },
-              size: () => {
-                return Buffer.byteLength(sitemap, "utf8");
-              }
-            };
+            compilation.assets[sitemapFilename] = new RawSource(sitemap);
           });
         } catch (err) {
           compilation.errors.push(err.stack);
@@ -186,14 +180,7 @@ export default class SitemapWebpackPlugin {
               if (err) {
                 compilation.errors.push(err.stack);
               } else {
-                compilation.assets[sitemapFilename] = {
-                  source: () => {
-                    return compressed;
-                  },
-                  size: () => {
-                    return Buffer.byteLength(compressed);
-                  }
-                };
+                compilation.assets[sitemapFilename] = new RawSource(compressed);
               }
 
               sitemapsZipped++;

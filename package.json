@@ -67,7 +67,9 @@
     "webpack-stats-plugin": "^0.2.1"
   },
   "dependencies": {
-    "sitemap": "^6.0.0"
+    "sitemap": "^6.0.0",
+    "stream-to-string": "^1.2.0",
+    "webpack-sources": "^1.4.3"
   },
   "resolutions": {
     "kind-of": "^6.0.3"
