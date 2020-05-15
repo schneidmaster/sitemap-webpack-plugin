@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.0
+
+* If more than 50,000 paths are provided, automatically split up into [multiple sitemap files linked by a sitemap index](https://support.google.com/webmasters/answer/75712)
+
 ## 0.7.1
 
 * Updated and expanded README documentation
