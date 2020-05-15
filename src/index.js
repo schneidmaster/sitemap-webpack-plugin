@@ -107,7 +107,7 @@ export default class SitemapWebpackPlugin {
     return sitemap;
   }
 
-  async generate() {
+  async generate(publicPath) {
     // Validate configuration
     if (typeof this.base !== "string") {
       throw new Error("Provided base URL is not a string");
@@ -123,7 +123,7 @@ export default class SitemapWebpackPlugin {
       return [sitemap];
     } else {
       const output = [];
-      const indexExt = this.skipgzip ? ".xml" : ".xml.gz";
+      const indexExt = this.skipgzip ? "xml" : "xml.gz";
 
       const sitemapIndex = new SitemapIndexStream();
       let index = 1;
@@ -135,7 +135,7 @@ export default class SitemapWebpackPlugin {
         output.push(sitemap);
 
         sitemapIndex.write(
-          `${this.base}/${this.filename}-${index}.${indexExt}`
+          `${this.base}${publicPath}/${this.filename}-${index}.${indexExt}`
         );
         index++;
       }
@@ -154,8 +154,14 @@ export default class SitemapWebpackPlugin {
       async (compilation, callback) => {
         let sitemaps = null;
 
+        const publicPath = (
+          (compilation.options.output &&
+            compilation.options.output.publicPath) ||
+          ""
+        ).replace(/\/$/, "");
+
         try {
-          sitemaps = await this.generate();
+          sitemaps = await this.generate(publicPath);
 
           sitemaps.forEach((sitemap, idx) => {
             const sitemapFilename =
