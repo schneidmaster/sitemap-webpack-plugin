@@ -1,7 +1,6 @@
 import { SitemapStream, SitemapIndexStream } from "sitemap";
 import { RawSource } from "webpack-sources";
 import zlib from "zlib";
-import generateDate from "./date";
 
 const normalizeOptions = (options, keys) => {
   keys.forEach(key => {
@@ -60,7 +59,7 @@ export default class SitemapWebpackPlugin {
       if (typeof lastmod === "string") {
         this.lastmod = lastmod;
       } else {
-        this.lastmod = generateDate();
+        this.lastmod = new Date().toISOString().split("T")[0];
       }
     }
     this.changefreq = changefreq;
