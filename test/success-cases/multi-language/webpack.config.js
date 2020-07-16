@@ -15,21 +15,21 @@ const paths = [
     path: "/about/",
     priority: "0.4",
     links: [
-      { lang: "en", url: "/" },
+      { lang: "en", url: "/about/" },
       { lang: "es", url: "/es/about/" }
     ]
   },
   {
     path: "/faq/",
     links: [
-      { lang: "en", url: "/" },
+      { lang: "en", url: "/about/" },
       { lang: "es", url: "/es/faq/" }
     ]
   },
   {
     path: "/contact/",
     links: [
-      { lang: "en", url: "/" },
+      { lang: "en", url: "/contact/" },
       { lang: "es", url: "/es/contact/" }
     ]
   }
