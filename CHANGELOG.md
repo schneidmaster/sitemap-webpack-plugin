@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.0
+
+* Use new API on webpack 5 to remove deprecation warning.
+
 ## 0.8.1
 
 * Use native `new Date().toISOString()` to generate dates, rather than a more complicated custom date function. This prevents an error in certain locales.
