@@ -49,7 +49,9 @@ export default (referenceDir, targetDir, done) => {
       }
 
       async.map(
-        referenceFiles.concat(targetFiles).filter(file => file !== "index.js"),
+        referenceFiles
+          .concat(targetFiles)
+          .filter(file => !["index.js", "stats.json"].includes(file)),
         compareFile,
         (err, results) => {
           if (err) {
