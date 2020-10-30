@@ -12,8 +12,7 @@ jest.mock("zlib", () => {
 
 describe("Gzip error", () => {
   it("reports error", done => {
-    const webpackConfig = require("./success-cases/basic/webpack.config.js")
-      .default;
+    const webpackConfig = require("./cases/basic/webpack.config.js").default;
 
     webpack(webpackConfig, (_err, output) => {
       expect(output.compilation.errors[0]).toEqual(

@@ -2,10 +2,6 @@
   "env": {
     "node": true
   },
-  "extends": [
-    "standard",
-    "prettier/standard",
-    "plugin:prettier/recommended"
-  ],
+  "extends": ["standard", "prettier/standard", "plugin:prettier/recommended"],
   "parser": "babel-eslint"
 }
