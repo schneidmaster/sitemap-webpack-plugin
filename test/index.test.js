@@ -2,27 +2,31 @@
 
 import webpack from "webpack";
 import clean from "rimraf";
-import tk from "timekeeper";
 import getSubDirsSync from "./utils/get-sub-dirs-sync";
 import directoryContains from "./utils/directory-contains";
 
 const successCases = getSubDirsSync(`${__dirname}/success-cases`);
 const errorCases = getSubDirsSync(`${__dirname}/error-cases`);
 
+const OriginalDate = Date;
+
 describe("Success cases", () => {
-  beforeAll(() => {
-    tk.freeze(new Date(2020, 0, 1));
-  });
-
-  afterAll(() => {
-    tk.reset();
-  });
-
   successCases.forEach(successCase => {
     const desc = require(`./success-cases/${successCase}/desc.js`).default;
 
     describe(desc, () => {
       beforeEach(done => {
+        if (successCase === "global-opts") {
+          const mockDate = new Date(1577836800000);
+          global.Date = class extends Date {
+            constructor() {
+              return mockDate;
+            }
+          };
+        } else {
+          global.Date = OriginalDate;
+        }
+
         clean(`${__dirname}/success-cases/${successCase}/actual-output`, done);
       });
 

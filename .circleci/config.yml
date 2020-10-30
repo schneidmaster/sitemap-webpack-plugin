@@ -3,27 +3,29 @@ jobs:
   test:
     working_directory: ~/sitemap-webpack-plugin
     docker:
-      - image: circleci/node:latest
+      - image: cimg/node:current
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "yarn.lock" }}
       - run:
-          name: yarn-install
+          name: Install dependencies
           command: yarn install
       - save_cache:
           key: dependency-cache-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
-            - ./node_modules
       - run:
-          name: yarn-test
-          command: yarn test
+          name: Test against webpack 4
+          command: yarn test:webpack4
       - run:
-          name: yarn-lint
+          name: Test against webpack 5
+          command: yarn test:webpack5
+      - run:
+          name: Lint
           command: yarn lint
       - run:
-          name: yarn-coveralls
+          name: Coveralls
           command: yarn coveralls
       
 workflows:

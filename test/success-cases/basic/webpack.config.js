@@ -1,5 +1,4 @@
 import SitemapPlugin from "../../../src/";
-import { StatsWriterPlugin } from "webpack-stats-plugin";
 
 export default {
   entry: () => [],
@@ -9,8 +8,5 @@ export default {
     libraryTarget: "umd"
   },
 
-  plugins: [
-    new SitemapPlugin("https://mysite.com", ["/", "/about"]),
-    new StatsWriterPlugin() // Causes the asset's `size` method to be called
-  ]
+  plugins: [new SitemapPlugin("https://mysite.com", ["/", "/about"])]
 };

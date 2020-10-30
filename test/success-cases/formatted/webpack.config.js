@@ -1,5 +1,4 @@
 import SitemapPlugin from "../../../src/";
-import { StatsWriterPlugin } from "webpack-stats-plugin";
 import prettydata from "pretty-data";
 
 const prettyPrint = xml => {
@@ -17,7 +16,6 @@ export default {
   plugins: [
     new SitemapPlugin("https://mysite.com", ["/", "/about"], {
       formatter: prettyPrint
-    }),
-    new StatsWriterPlugin() // Causes the asset's `size` method to be called
+    })
   ]
 };

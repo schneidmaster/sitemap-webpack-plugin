@@ -1,12 +1,14 @@
 {
   "name": "sitemap-webpack-plugin",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Webpack plugin to generate a sitemap.",
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
     "prepublish": "npm run build",
     "test": "jest",
+    "test:webpack4": "yarn add webpack@^4 --dev && jest",
+    "test:webpack5": "yarn add webpack@^5 --dev && jest",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "format": "prettier --write '**/*.js'",
     "lint": "eslint src/*.js 'test/**/*.js'"
@@ -58,13 +60,11 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "glob": "^7.1.1",
-    "jest": "^25.1.0",
+    "jest": "^26.6.1",
     "prettier": "^1.19.1",
     "pretty-data": "^0.40.0",
     "rimraf": "^2.5.4",
-    "timekeeper": "^2.2.0",
-    "webpack": "^4.41.5",
-    "webpack-stats-plugin": "^0.2.1"
+    "webpack": "^5"
   },
   "dependencies": {
     "sitemap": "^6.0.0",

@@ -1,5 +1,4 @@
 import SitemapPlugin from "../../../src/";
-import { StatsWriterPlugin } from "webpack-stats-plugin";
 
 const paths = [];
 for (let i = 0; i < 60000; i++) {
@@ -15,8 +14,5 @@ export default {
     publicPath: "/assets"
   },
 
-  plugins: [
-    new SitemapPlugin("https://mysite.com", paths),
-    new StatsWriterPlugin() // Causes the asset's `size` method to be called
-  ]
+  plugins: [new SitemapPlugin("https://mysite.com", paths)]
 };
