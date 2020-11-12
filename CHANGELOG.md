@@ -1,5 +1,69 @@
 # Changelog
 
+## 1.0
+
+* First stable release! :tada:
+* Plugin now accepts a single options object to match the webpack convention.
+* Added schema validation for plugin configuration.
+* Dropped support for deprecated camel-cased option names. "changefreq", "filename", "lastmod", and "skipgzip" must now be lowercase.
+* To upgrade from 0.x: 1) change the plugin arguments to a single object as detailed below, and 2) downcase any camel-cased option names as mentioned in the previous bullet.
+
+```javascript
+// Before:
+{
+  // snip
+  plugins: [
+    new SitemapPlugin(
+      'https://mysite.com',
+      [
+        {
+          path: '/foo/',
+          lastMod: '2015-01-04',
+          priority: '0.8',
+          changeFreq: 'daily'
+        },
+        {
+          path: '/bar/',
+        }
+      ],
+      {
+        fileName: 'map.xml',
+        lastMod: true,
+        changeFreq: 'monthly',
+        priority: '0.4'
+      }
+    )
+  ]
+}
+
+// After:
+{
+  // snip
+  plugins: [
+    new SitemapPlugin({
+      base: 'https://mysite.com',
+      paths: [
+        {
+          path: '/foo/',
+          lastmod: '2015-01-04',
+          priority: '0.8',
+          changefreq: 'daily'
+        },
+        {
+          path: '/bar/',
+        }
+      ],
+      options: {
+        filename: 'map.xml',
+        lastmod: true,
+        changefreq: 'monthly',
+        priority: '0.4'
+      }
+    })
+  ]
+}
+```
+
 ## 0.9.0
 
 * Use new API on webpack 5 to remove deprecation warning.

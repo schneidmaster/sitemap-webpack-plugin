@@ -1,0 +1,93 @@
+{
+  "type": "object",
+  "properties": {
+    "base": {
+      "type": "string",
+      "description": "The fully qualified base domain of your site (e.g. `https://mysite.com`)"
+    },
+    "paths": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "description": "The relative path to this page, e.g. '/about'",
+            "type": "string"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "description": "The relative path to this page, e.g. '/about'",
+                "type": "string"
+              },
+              "changefreq": {
+                "description": "How frequently the page is likely to change. This value provides general information to search engines and may not correlate exactly to how often they crawl the page.",
+                "enum": [
+                  "always",
+                  "hourly",
+                  "daily",
+                  "weekly",
+                  "monthly",
+                  "yearly",
+                  "never"
+                ]
+              },
+              "lastmod": {
+                "description": "The date of last modification of the file. This date should be in W3C Datetime format. This format allows you to omit the time portion, if desired, and use YYYY-MM-DD. If set to `true`, the plugin will use the current timestamp.",
+                "anyOf": [{ "type": "string" }, { "type": "boolean" }]
+              },
+              "priority": {
+                "description": "The priority of this URL relative to other URLs on your site. Valid values range from 0.0 to 1.0.",
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": ["path"]
+          }
+        ]
+      }
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "filename": {
+          "description": "The name of the sitemap file emitted to your build output.",
+          "type": "string"
+        },
+        "skipgzip": {
+          "description": "Whether to skip generating a gzipped sitemap alongside the plain-text file (defaults to `false`).",
+          "type": "boolean"
+        },
+        "formatter": {
+          "description": "An optional function to format the generated sitemap before it is emitted (for example, if you'd like to pretty-print the XML).",
+          "instanceOf": "Function"
+        },
+        "changefreq": {
+          "description": "How frequently the page is likely to change. This value provides general information to search engines and may not correlate exactly to how often they crawl the page. Can be overridden by path-specific `changefreq` setting.",
+          "enum": [
+            "always",
+            "hourly",
+            "daily",
+            "weekly",
+            "monthly",
+            "yearly",
+            "never"
+          ]
+        },
+        "lastmod": {
+          "description": "The date of last modification of the file. This date should be in W3C Datetime format. This format allows you to omit the time portion, if desired, and use YYYY-MM-DD. If set to `true`, the plugin will use the current timestamp. Can be overridden by path-specific `lastmod` setting.",
+          "anyOf": [{ "type": "string" }, { "type": "boolean" }]
+        },
+        "priority": {
+          "description": "The priority of this URL relative to other URLs on your site. Valid values range from 0.0 to 1.0. Can be overridden by path-specific `priority` setting.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  },
+  "required": ["base", "paths"],
+  "additionalProperties": false
+}

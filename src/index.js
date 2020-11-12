@@ -1,8 +1,10 @@
+import { validate } from "schema-utils";
 import { SitemapStream, SitemapIndexStream } from "sitemap";
 import webpack from "webpack";
 import webpackSources from "webpack-sources";
 import util from "util";
 import zlib from "zlib";
+import schema from "./schema.json";
 
 const gzip = util.promisify(zlib.gzip);
 
@@ -10,16 +12,6 @@ const gzip = util.promisify(zlib.gzip);
 // https://github.com/webpack/webpack/issues/11425#issuecomment-686607633
 // istanbul ignore next
 const { RawSource } = webpack.sources || webpackSources;
-
-const normalizeOptions = (options, keys) => {
-  keys.forEach(key => {
-    if (options[key]) {
-      options[key.toLowerCase()] = options[key];
-      delete options[key];
-    }
-  });
-  return options;
-};
 
 const streamToString = stream => {
   let str = "";
@@ -36,21 +28,14 @@ const streamToString = stream => {
 };
 
 export default class SitemapWebpackPlugin {
-  constructor(base, paths, options) {
+  constructor(configuration) {
+    validate(schema, configuration, { name: "SitemapWebpackPlugin" });
+
+    const { base, paths, options = {} } = configuration;
+
     // Set mandatory values
     this.base = base;
     this.paths = paths;
-
-    // Set options
-    if (typeof options === "undefined") {
-      options = {};
-    }
-    options = normalizeOptions(options, [
-      "changeFreq",
-      "fileName",
-      "lastMod",
-      "skipGzip"
-    ]);
 
     const {
       filename,
@@ -80,21 +65,10 @@ export default class SitemapWebpackPlugin {
     const sitemap = new SitemapStream({ hostname: this.base });
 
     paths.forEach(path => {
-      if (typeof path === "object") {
-        if (typeof path.path !== "string") {
-          throw new Error(`Path is not a string: ${path}`);
-        } else {
-          // Clone the object so we can mutate it below without
-          // potentially messing up the original we were given.
-          path = { ...path };
-        }
-      } else if (typeof path === "string") {
-        path = { path: path };
-      } else {
-        throw new Error(`Path is not a string: ${path}`);
+      if (typeof path === "string") {
+        path = { path };
       }
 
-      path = normalizeOptions(path, ["changeFreq", "lastMod"]);
       const { path: url, changefreq, lastmod, priority, ...rest } = path;
 
       const sitemapOptions = {
@@ -129,14 +103,8 @@ export default class SitemapWebpackPlugin {
   }
 
   async generate(publicPath) {
-    // Validate configuration
-    if (typeof this.base !== "string") {
-      throw new Error("Provided base URL is not a string");
-    } else if (this.base.substr(-1) === "/") {
+    if (this.base.substr(-1) === "/") {
       this.base = this.base.replace(/\/$/, "");
-    }
-    if (!Array.isArray(this.paths)) {
-      throw new Error("Provided paths are not an array");
     }
 
     if (this.paths.length <= 50000) {

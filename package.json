@@ -1,16 +1,16 @@
 {
   "name": "sitemap-webpack-plugin",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "Webpack plugin to generate a sitemap.",
   "main": "lib/index.js",
   "scripts": {
-    "build": "babel src --out-dir lib",
+    "build": "babel src --out-dir lib && cp src/schema.json lib/schema.json",
     "prepublish": "npm run build",
     "test": "jest",
     "test:webpack4": "yarn add webpack@^4 --dev && jest",
     "test:webpack5": "yarn add webpack@^5 --dev && jest",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "format": "prettier --write '**/*.js'",
+    "format": "prettier --write '**/*.{js,json}'",
     "lint": "eslint src/*.js 'test/**/*.js'"
   },
   "repository": {
@@ -23,7 +23,7 @@
     "sitemap",
     "static"
   ],
-  "author": "Zach Schneider <zach@schneid.io>",
+  "author": "Zach Schneider <zach@schneider.dev>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/schneidmaster/sitemap-webpack-plugin/issues"
@@ -67,6 +67,7 @@
     "webpack": "^5"
   },
   "dependencies": {
+    "schema-utils": "^3.0.0",
     "sitemap": "^6.0.0",
     "webpack-sources": "^1.4.3"
   },
