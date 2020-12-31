@@ -4,14 +4,14 @@
   "description": "Webpack plugin to generate a sitemap.",
   "main": "lib/index.js",
   "scripts": {
-    "build": "babel src --out-dir lib && cp src/schema.json lib/schema.json",
+    "build": "tsc",
     "prepublish": "npm run build",
     "test": "jest",
     "test:webpack4": "yarn add webpack@^4 --dev && jest",
     "test:webpack5": "yarn add webpack@^5 --dev && jest",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "format": "prettier --write '**/*.{js,json}'",
-    "lint": "eslint src/*.js 'test/**/*.js'"
+    "format": "prettier --write '**/*.{ts,json}'",
+    "lint": "eslint src/*.ts"
   },
   "repository": {
     "type": "git",
@@ -45,25 +45,22 @@
     "testEnvironment": "node"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
+    "@types/jest": "^26.0.19",
+    "@types/webpack-sources": "^2.1.0",
+    "@typescript-eslint/eslint-plugin": "^4.11.1",
+    "@typescript-eslint/parser": "^4.11.1",
     "async": "^2.1.4",
-    "babel-eslint": "^10.0.3",
     "coveralls": "^3.0.9",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
+    "eslint": "^7.16.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-prettier": "^3.3.0",
     "glob": "^7.1.1",
     "jest": "^26.6.1",
     "prettier": "^1.19.1",
     "pretty-data": "^0.40.0",
     "rimraf": "^2.5.4",
+    "ts-jest": "^26.4.4",
+    "typescript": "^4.1.3",
     "webpack": "^5"
   },
   "dependencies": {

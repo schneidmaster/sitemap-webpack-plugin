@@ -1,37 +1,70 @@
+import { JSONSchema7 } from "json-schema";
 import { validate } from "schema-utils";
-import { SitemapStream, SitemapIndexStream } from "sitemap";
-import webpack from "webpack";
+import {
+  SitemapStream,
+  SitemapIndexStream,
+  SitemapItemLoose,
+  EnumChangefreq,
+  streamToPromise
+} from "sitemap";
+import * as webpack from "webpack";
 import webpackSources from "webpack-sources";
-import util from "util";
-import zlib from "zlib";
+import * as util from "util";
+import * as zlib from "zlib";
 import schema from "./schema.json";
 
-const gzip = util.promisify(zlib.gzip);
+type Gzip = (text: string) => Promise<Buffer>;
+const gzip: Gzip = util.promisify(zlib.gzip);
 
 // Webpack 4/5 compat
 // https://github.com/webpack/webpack/issues/11425#issuecomment-686607633
 // istanbul ignore next
 const { RawSource } = webpack.sources || webpackSources;
 
-const streamToString = stream => {
-  let str = "";
+type PathOpts = {
+  changefreq?: EnumChangefreq;
+  lastmod?: string;
+  priority?: number;
+};
 
-  return new Promise(resolve => {
-    stream.on("data", data => {
-      str += data.toString();
+type Path =
+  | string
+  | (PathOpts & {
+      path: string;
     });
 
-    stream.on("end", () => {
-      resolve(str);
-    });
-  });
+type ConfigurationOptions = SitemapItemLoose & {
+  filename?: string;
+  skipgzip?: boolean;
+  formatter?: (code: string) => string;
+  lastmod?: null | string | boolean;
+  changefreq?: EnumChangefreq;
+  priority?: number;
+};
+
+type Configuration = {
+  base: string;
+  paths: Array<Path>;
+  options: ConfigurationOptions;
 };
 
 export default class SitemapWebpackPlugin {
-  constructor(configuration) {
-    validate(schema, configuration, { name: "SitemapWebpackPlugin" });
+  private base: string;
+  private paths: Array<Path>;
+  private filename: string;
+  private skipgzip: boolean;
+  private formatter?: (code: string) => string;
+  private lastmod?: string;
+  private changefreq?: EnumChangefreq;
+  private priority?: number;
+  private options: SitemapItemLoose;
 
-    const { base, paths, options = {} } = configuration;
+  constructor(configuration: Configuration) {
+    validate(schema as JSONSchema7, configuration, {
+      name: "SitemapWebpackPlugin"
+    });
+
+    const { base, paths, options = {} as ConfigurationOptions } = configuration;
 
     // Set mandatory values
     this.base = base;
@@ -48,7 +81,7 @@ export default class SitemapWebpackPlugin {
     } = options;
     this.filename = filename ? filename.replace(/\.xml$/, "") : "sitemap";
     this.skipgzip = skipgzip || false;
-    this.formatter = formatter || null;
+    this.formatter = formatter;
     if (lastmod) {
       if (typeof lastmod === "string") {
         this.lastmod = lastmod;
@@ -61,7 +94,7 @@ export default class SitemapWebpackPlugin {
     this.options = rest;
   }
 
-  generateSitemap(paths) {
+  async generateSitemap(paths: Array<Path>): Promise<string> {
     const sitemap = new SitemapStream({ hostname: this.base });
 
     paths.forEach(path => {
@@ -83,7 +116,7 @@ export default class SitemapWebpackPlugin {
         sitemapOptions.lastmod = lastmod || this.lastmod;
       }
       if (priority || this.priority) {
-        sitemapOptions.priority = parseFloat(priority || this.priority);
+        sitemapOptions.priority = priority || this.priority;
       }
       sitemap.write(sitemapOptions);
     });
@@ -92,17 +125,20 @@ export default class SitemapWebpackPlugin {
     return this.sitemapStreamToString(sitemap);
   }
 
-  async sitemapStreamToString(sitemapStream) {
-    let sitemap = await streamToString(sitemapStream);
+  async sitemapStreamToString(
+    sitemapStream: SitemapIndexStream | SitemapStream
+  ): Promise<string> {
+    const sitemapBuffer = await streamToPromise(sitemapStream);
+    let sitemap = sitemapBuffer.toString();
 
-    if (this.formatter !== null) {
+    if (this.formatter) {
       sitemap = this.formatter(sitemap);
     }
 
     return sitemap;
   }
 
-  async generate(publicPath) {
+  async generate(publicPath: string): Promise<Array<string>> {
     if (this.base.substr(-1) === "/") {
       this.base = this.base.replace(/\/$/, "");
     }
@@ -137,7 +173,7 @@ export default class SitemapWebpackPlugin {
     }
   }
 
-  async run(compilation) {
+  async run(compilation: webpack.Compilation): Promise<void> {
     let sitemaps = null;
 
     let publicPath = "";
@@ -147,7 +183,10 @@ export default class SitemapWebpackPlugin {
       compilation.options.output.publicPath &&
       compilation.options.output.publicPath !== "auto"
     ) {
-      publicPath = compilation.options.output.publicPath.replace(/\/$/, "");
+      publicPath = (compilation.options.output.publicPath as string).replace(
+        /\/$/,
+        ""
+      );
     }
 
     try {
@@ -156,7 +195,7 @@ export default class SitemapWebpackPlugin {
       sitemaps.forEach((sitemap, idx) => {
         const sitemapFilename =
           idx === 0 ? `${this.filename}.xml` : `${this.filename}-${idx}.xml`;
-        compilation.emitAsset(sitemapFilename, new RawSource(sitemap));
+        compilation.emitAsset(sitemapFilename, new RawSource(sitemap, false));
       });
     } catch (err) {
       compilation.errors.push(err.stack);
@@ -171,7 +210,10 @@ export default class SitemapWebpackPlugin {
             : `${this.filename}-${idx}.xml.gz`;
         try {
           const compressed = await gzip(sitemap);
-          compilation.emitAsset(sitemapFilename, new RawSource(compressed));
+          compilation.emitAsset(
+            sitemapFilename,
+            new RawSource(compressed, false)
+          );
         } catch (err) {
           compilation.errors.push(err.stack);
         }
@@ -179,7 +221,7 @@ export default class SitemapWebpackPlugin {
     }
   }
 
-  apply(compiler) {
+  apply(compiler: webpack.Compiler): void {
     switch (webpack.version[0]) {
       case "5":
         compiler.hooks.compilation.tap(

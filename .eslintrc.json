@@ -2,6 +2,10 @@
   "env": {
     "node": true
   },
-  "extends": ["standard", "prettier/standard", "plugin:prettier/recommended"],
-  "parser": "babel-eslint"
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended"
+  ],
+  "parser": "@typescript-eslint/parser"
 }
