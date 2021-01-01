@@ -5,48 +5,68 @@ import {
   SitemapIndexStream,
   SitemapItemLoose,
   EnumChangefreq,
-  streamToPromise
+  isValidChangeFreq
 } from "sitemap";
-import * as webpack from "webpack";
+import { sources, version, Compiler, Compilation } from "webpack";
 import webpackSources from "webpack-sources";
-import * as util from "util";
-import * as zlib from "zlib";
+import { promisify } from "util";
+import { gzip as gzipCallback } from "zlib";
 import schema from "./schema.json";
 
 type Gzip = (text: string) => Promise<Buffer>;
-const gzip: Gzip = util.promisify(zlib.gzip);
+const gzip: Gzip = promisify(gzipCallback);
 
 // Webpack 4/5 compat
 // https://github.com/webpack/webpack/issues/11425#issuecomment-686607633
 // istanbul ignore next
-const { RawSource } = webpack.sources || webpackSources;
+const { RawSource } = sources || webpackSources;
 
-type PathOpts = {
-  changefreq?: EnumChangefreq;
-  lastmod?: string;
-  priority?: number;
+type SitemapOpts = Omit<SitemapItemLoose, "url" | "lastmod" | "changefreq"> & {
+  lastmod?: string | boolean;
+  changefreq?: string | EnumChangefreq;
 };
 
-type Path =
-  | string
-  | (PathOpts & {
-      path: string;
-    });
+type PathOpts = SitemapOpts & {
+  path: string;
+};
 
-type ConfigurationOptions = SitemapItemLoose & {
+type Path = string | PathOpts;
+
+type ConfigurationOptions = SitemapOpts & {
   filename?: string;
   skipgzip?: boolean;
   formatter?: (code: string) => string;
-  lastmod?: null | string | boolean;
-  changefreq?: EnumChangefreq;
-  priority?: number;
 };
 
 type Configuration = {
   base: string;
   paths: Array<Path>;
-  options: ConfigurationOptions;
+  options?: ConfigurationOptions;
 };
+
+function assertValidChangefreq(
+  changefreq: string
+): asserts changefreq is EnumChangefreq {
+  if (!isValidChangeFreq(changefreq)) {
+    throw new Error(`Invalid changefreq option: ${changefreq}`);
+  }
+}
+
+function streamToString(
+  stream: SitemapIndexStream | SitemapStream
+): Promise<string> {
+  let str = "";
+
+  return new Promise(resolve => {
+    stream.on("data", (data: Buffer) => {
+      str += data.toString();
+    });
+
+    stream.on("end", () => {
+      resolve(str);
+    });
+  });
+}
 
 export default class SitemapWebpackPlugin {
   private base: string;
@@ -57,7 +77,7 @@ export default class SitemapWebpackPlugin {
   private lastmod?: string;
   private changefreq?: EnumChangefreq;
   private priority?: number;
-  private options: SitemapItemLoose;
+  private options: SitemapOpts;
 
   constructor(configuration: Configuration) {
     validate(schema as JSONSchema7, configuration, {
@@ -89,7 +109,10 @@ export default class SitemapWebpackPlugin {
         this.lastmod = new Date().toISOString().split("T")[0];
       }
     }
-    this.changefreq = changefreq;
+    if (changefreq) {
+      assertValidChangefreq(changefreq);
+      this.changefreq = changefreq;
+    }
     this.priority = priority;
     this.options = rest;
   }
@@ -109,6 +132,9 @@ export default class SitemapWebpackPlugin {
         ...rest,
         url
       };
+      if (changefreq) {
+        assertValidChangefreq(changefreq);
+      }
       if (changefreq || this.changefreq) {
         sitemapOptions.changefreq = changefreq || this.changefreq;
       }
@@ -128,8 +154,7 @@ export default class SitemapWebpackPlugin {
   async sitemapStreamToString(
     sitemapStream: SitemapIndexStream | SitemapStream
   ): Promise<string> {
-    const sitemapBuffer = await streamToPromise(sitemapStream);
-    let sitemap = sitemapBuffer.toString();
+    let sitemap = await streamToString(sitemapStream);
 
     if (this.formatter) {
       sitemap = this.formatter(sitemap);
@@ -173,9 +198,8 @@ export default class SitemapWebpackPlugin {
     }
   }
 
-  async run(compilation: webpack.Compilation): Promise<void> {
-    let sitemaps = null;
-
+  async run(compilation: Compilation): Promise<void> {
+    let sitemaps: Array<string> = [];
     let publicPath = "";
 
     if (
@@ -201,7 +225,7 @@ export default class SitemapWebpackPlugin {
       compilation.errors.push(err.stack);
     }
 
-    if (sitemaps !== null && this.skipgzip !== true) {
+    if (this.skipgzip !== true) {
       for (let idx = 0; idx < sitemaps.length; idx++) {
         const sitemap = sitemaps[idx];
         const sitemapFilename =
@@ -221,8 +245,8 @@ export default class SitemapWebpackPlugin {
     }
   }
 
-  apply(compiler: webpack.Compiler): void {
-    switch (webpack.version[0]) {
+  apply(compiler: Compiler): void {
+    switch (version[0]) {
       case "5":
         compiler.hooks.compilation.tap(
           "sitemap-webpack-plugin",
@@ -230,7 +254,7 @@ export default class SitemapWebpackPlugin {
             compilation.hooks.processAssets.tapPromise(
               {
                 name: "sitemap-webpack-plugin",
-                stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
+                stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
               },
               async () => this.run(compilation)
             );

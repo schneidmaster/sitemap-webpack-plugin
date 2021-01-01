@@ -11,7 +11,7 @@
     "test:webpack5": "yarn add webpack@^5 --dev && jest",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "format": "prettier --write '**/*.{ts,json}'",
-    "lint": "eslint src/*.ts"
+    "lint": "eslint 'src/*.ts' 'test/**/*.ts'"
   },
   "repository": {
     "type": "git",
@@ -36,20 +36,13 @@
     "README.md"
   ],
   "homepage": "https://github.com/schneidmaster/sitemap-webpack-plugin#readme",
-  "jest": {
-    "collectCoverage": true,
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/test/"
-    ],
-    "testEnvironment": "node"
-  },
   "devDependencies": {
     "@types/jest": "^26.0.19",
+    "@types/pretty-data": "^0.40.0",
+    "@types/rimraf": "^3.0.0",
     "@types/webpack-sources": "^2.1.0",
     "@typescript-eslint/eslint-plugin": "^4.11.1",
     "@typescript-eslint/parser": "^4.11.1",
-    "async": "^2.1.4",
     "coveralls": "^3.0.9",
     "eslint": "^7.16.0",
     "eslint-config-prettier": "^7.1.0",
@@ -60,6 +53,7 @@
     "pretty-data": "^0.40.0",
     "rimraf": "^2.5.4",
     "ts-jest": "^26.4.4",
+    "ts-node": "^9.1.1",
     "typescript": "^4.1.3",
     "webpack": "^5"
   },

@@ -6,18 +6,13 @@ for (let i = 0; i < 60000; i++) {
 }
 
 export default {
-  entry: () => [],
+  entry: (): [] => [],
   output: {
     filename: "index.js",
     path: `${__dirname}/actual-output`,
-    libraryTarget: "umd"
+    libraryTarget: "umd",
+    publicPath: "/assets"
   },
 
-  plugins: [
-    new SitemapPlugin({
-      base: "https://mysite.com",
-      paths,
-      options: { skipgzip: true }
-    })
-  ]
+  plugins: [new SitemapPlugin({ base: "https://mysite.com", paths })]
 };

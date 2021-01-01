@@ -6,7 +6,7 @@ for (let i = 0; i < 60000; i++) {
 }
 
 export default {
-  entry: () => [],
+  entry: (): [] => [],
   output: {
     filename: "index.js",
     path: `${__dirname}/actual-output`,

@@ -1,7 +1,12 @@
 import SitemapPlugin from "../../../src/";
 
+const paths = [];
+for (let i = 0; i < 60000; i++) {
+  paths.push(`/${i}`);
+}
+
 export default {
-  entry: () => [],
+  entry: (): [] => [],
   output: {
     filename: "index.js",
     path: `${__dirname}/actual-output`,
@@ -11,10 +16,8 @@ export default {
   plugins: [
     new SitemapPlugin({
       base: "https://mysite.com",
-      paths: ["/", "/about"],
-      options: {
-        skipgzip: true
-      }
+      paths,
+      options: { skipgzip: true }
     })
   ]
 };
