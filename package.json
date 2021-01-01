@@ -7,8 +7,6 @@
     "build": "tsc",
     "prepublish": "npm run build",
     "test": "jest",
-    "test:webpack4": "yarn add webpack@^4 --dev && jest",
-    "test:webpack5": "yarn add webpack@^5 --dev && jest",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "format": "prettier --write '**/*.{ts,json}'",
     "lint": "eslint 'src/*.ts' 'test/**/*.ts'"
