@@ -62,13 +62,13 @@ const paths = [
   {
     path: '/foo/',
     lastmod: '2015-01-04',
-    priority: '0.8',
+    priority: 0.8,
     changefreq: 'monthly'
   },
   {
     path: '/bar/',
     lastmod: '2018-02-05',
-    priority: '0.5',
+    priority: 0.5,
     changefreq: 'yearly'
   }
 ];
@@ -111,7 +111,7 @@ export default {
         filename: 'map.xml',
         lastmod: true,
         changefreq: 'monthly',
-        priority: '0.4'
+        priority: 0.4
       }
     })
   ]

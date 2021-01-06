@@ -46,7 +46,7 @@
         {
           path: '/foo/',
           lastmod: '2015-01-04',
-          priority: '0.8',
+          priority: 0.8,
           changefreq: 'daily'
         },
         {
@@ -57,7 +57,7 @@
         filename: 'map.xml',
         lastmod: true,
         changefreq: 'monthly',
-        priority: '0.4'
+        priority: 0.4
       }
     })
   ]
