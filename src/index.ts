@@ -136,14 +136,13 @@ export default class SitemapWebpackPlugin {
           async () => this.run(compilation)
         );
       });
-    } else if (compiler.hooks.emit.tapPromise) {
+    } else if (compiler.hooks) {
       // webpack 4
       compiler.hooks.emit.tapPromise(
         "sitemap-webpack-plugin",
         async compilation => this.run(compilation)
       );
     } else {
-      // istanbul ignore next
       throw new Error("Unsupported webpack version; must be 4 or 5");
     }
   }
