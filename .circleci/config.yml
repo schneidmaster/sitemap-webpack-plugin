@@ -13,8 +13,8 @@ jobs:
           command: |
             yarn install
             cd test/webpack-3 && yarn install
-            cd test/webpack-4 && yarn install
-            cd test/webpack-5 && yarn install
+            cd ../webpack-4 && yarn install
+            cd ../webpack-5 && yarn install
       - save_cache:
           key: dependency-cache-{{ checksum "yarn.lock" }}-v1
           paths:
