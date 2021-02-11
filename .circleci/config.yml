@@ -7,20 +7,21 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
+          key: dependency-cache-{{ checksum "yarn.lock" }}-v1
       - run:
           name: Install dependencies
-          command: yarn install
+          command: |
+            yarn install
+            cd test/webpack-3 && yarn install
+            cd ../webpack-4 && yarn install
+            cd ../webpack-5 && yarn install
       - save_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
+          key: dependency-cache-{{ checksum "yarn.lock" }}-v1
           paths:
             - ~/.cache/yarn
       - run:
-          name: Test against webpack 4
-          command: yarn test:webpack4
-      - run:
-          name: Test against webpack 5
-          command: yarn test:webpack5
+          name: Run tests
+          command: yarn test
       - run:
           name: Lint
           command: yarn lint

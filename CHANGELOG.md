@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1
+
+* Plugin source is now TypeScript and type declaration files are included when installed from npm
+
 ## 1.0
 
 * First stable release! :tada:
