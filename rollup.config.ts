@@ -6,7 +6,7 @@ export default {
   output: {
     file: "lib/index.js",
     format: "cjs",
-    exports: "default"
+    exports: "named"
   },
   external: [
     "schema-utils",

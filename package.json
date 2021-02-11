@@ -6,7 +6,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "rollup -c rollup.config.ts",
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "test": "jest",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "format": "prettier --write '**/*.{ts,json}'",
