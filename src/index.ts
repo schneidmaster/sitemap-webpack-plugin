@@ -1,6 +1,6 @@
 import { JSONSchema7 } from "json-schema";
 import { validate } from "schema-utils";
-import { version, Compiler, Compilation } from "webpack";
+import { Compiler, Compilation } from "webpack";
 import { generateSitemaps } from "./generators";
 import {
   RawSource,
@@ -125,33 +125,26 @@ export default class SitemapWebpackPlugin {
   }
 
   apply(compiler: Compiler): void {
-    switch (version[0]) {
-      case "5":
-        compiler.hooks.compilation.tap(
-          "sitemap-webpack-plugin",
-          compilation => {
-            compilation.hooks.processAssets.tapPromise(
-              {
-                name: "sitemap-webpack-plugin",
-                stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
-              },
-              async () => this.run(compilation)
-            );
-          }
+    if (compiler.webpack && compiler.webpack.version[0] == "5") {
+      // webpack 5
+      compiler.hooks.compilation.tap("sitemap-webpack-plugin", compilation => {
+        compilation.hooks.processAssets.tapPromise(
+          {
+            name: "sitemap-webpack-plugin",
+            stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
+          },
+          async () => this.run(compilation)
         );
-        break;
-
+      });
+    } else if (compiler.hooks.emit.tapPromise) {
+      // webpack 4
+      compiler.hooks.emit.tapPromise(
+        "sitemap-webpack-plugin",
+        async compilation => this.run(compilation)
+      );
+    } else {
       // istanbul ignore next
-      case "4":
-        compiler.hooks.emit.tapPromise(
-          "sitemap-webpack-plugin",
-          async compilation => this.run(compilation)
-        );
-        break;
-
-      // istanbul ignore next
-      default:
-        throw new Error("Unsupported webpack version; must be 4 or 5");
+      throw new Error("Unsupported webpack version; must be 4 or 5");
     }
   }
 }

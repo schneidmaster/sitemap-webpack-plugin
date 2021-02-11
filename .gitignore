@@ -2,3 +2,6 @@ actual-output
 /coverage
 /lib
 /node_modules
+/test/*/node_modules
+/test/*/yarn.lock
+yarn-error.log
