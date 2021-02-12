@@ -1,10 +1,7 @@
 {
   "name": "webpack-5",
-  "version": "1.0.0",
-  "license": "MIT",
   "private": true,
   "dependencies": {
-    "sitemap-webpack-plugin": "file:../../",
     "webpack": "^5"
   }
 }
