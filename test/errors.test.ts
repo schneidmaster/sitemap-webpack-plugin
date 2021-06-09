@@ -17,9 +17,7 @@ describe("Errors", () => {
       },
       (_err, output) => {
         expect(output?.compilation?.errors[0]).toEqual(
-          expect.stringContaining(
-            "TypeError [ERR_INVALID_URL]: Invalid URL: example.com"
-          )
+          expect.stringContaining("TypeError [ERR_INVALID_URL]: Invalid URL")
         );
         done();
       }
