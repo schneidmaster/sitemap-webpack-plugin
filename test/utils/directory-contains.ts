@@ -1,5 +1,5 @@
 import { sync } from "glob";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { promisify } from "util";
 import { gunzip as gunzipCallback } from "zlib";
@@ -21,11 +21,19 @@ export default async function directoryContains(
   referenceDir: string,
   targetDir: string
 ): Promise<boolean> {
+  if (!existsSync(referenceDir)) {
+    throw new Error(`Unknown reference directory: ${referenceDir}`);
+  } else if (!existsSync(targetDir)) {
+    throw new Error(`Unknown target directory: ${targetDir}`);
+  }
+
   const referenceFiles = sync("**/*", {
     cwd: referenceDir,
     nodir: true
   }).filter(file => !["index.js", "stats.json"].includes(file));
-  const targetFiles = sync("**/*", { cwd: targetDir, nodir: true });
+  const targetFiles = sync("**/*", { cwd: targetDir, nodir: true }).filter(
+    file => !["index.js", "stats.json"].includes(file)
+  );
   if (referenceFiles.length !== targetFiles.length) {
     return false;
   } else {

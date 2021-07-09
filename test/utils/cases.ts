@@ -1,3 +1,4 @@
+import { dirname } from "path";
 import { sync as clean } from "rimraf";
 import directoryContains from "./directory-contains";
 import * as cases from "../cases";
@@ -28,7 +29,7 @@ export default function generateCases(webpack: WebpackShim): void {
             global.Date = OriginalDate;
           }
 
-          clean(`${__dirname}/cases/${successCase.key}/actual-output`);
+          clean(`${dirname(__dirname)}/cases/${successCase.key}/actual-output`);
         });
 
         it("generates the expected sitemap", done => {
@@ -37,7 +38,7 @@ export default function generateCases(webpack: WebpackShim): void {
               return done(err);
             }
 
-            const caseDir = `${__dirname}/cases/${successCase.key}`;
+            const caseDir = `${dirname(__dirname)}/cases/${successCase.key}`;
             const expectedDir = `${caseDir}/expected-output/`;
             const actualDir = `${caseDir}/actual-output/`;
 
