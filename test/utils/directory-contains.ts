@@ -17,6 +17,11 @@ const readFile = async (path: string) => {
   }
 };
 
+const listFiles = (directory: string) =>
+  sync("**/*", { cwd: directory, nodir: true }).filter(
+    file => !["index.js", "stats.json"].includes(file)
+  );
+
 export default async function directoryContains(
   referenceDir: string,
   targetDir: string
@@ -27,13 +32,9 @@ export default async function directoryContains(
     throw new Error(`Unknown target directory: ${targetDir}`);
   }
 
-  const referenceFiles = sync("**/*", {
-    cwd: referenceDir,
-    nodir: true
-  }).filter(file => !["index.js", "stats.json"].includes(file));
-  const targetFiles = sync("**/*", { cwd: targetDir, nodir: true }).filter(
-    file => !["index.js", "stats.json"].includes(file)
-  );
+  const referenceFiles = listFiles(referenceDir);
+  const targetFiles = listFiles(targetDir);
+
   if (referenceFiles.length !== targetFiles.length) {
     return false;
   } else {
