@@ -17,21 +17,20 @@ const readFile = async (path: string) => {
   }
 };
 
-const listFiles = (directory: string) =>
-  sync("**/*", { cwd: directory, nodir: true }).filter(
+const listFiles = (directory: string) => {
+  if (!existsSync(directory)) {
+    throw new Error(`Unknown directory: ${directory}`);
+  }
+
+  return sync("**/*", { cwd: directory, nodir: true }).filter(
     file => !["index.js", "stats.json"].includes(file)
   );
+};
 
 export default async function directoryContains(
   referenceDir: string,
   targetDir: string
 ): Promise<boolean> {
-  if (!existsSync(referenceDir)) {
-    throw new Error(`Unknown reference directory: ${referenceDir}`);
-  } else if (!existsSync(targetDir)) {
-    throw new Error(`Unknown target directory: ${targetDir}`);
-  }
-
   const referenceFiles = listFiles(referenceDir);
   const targetFiles = listFiles(targetDir);
 
