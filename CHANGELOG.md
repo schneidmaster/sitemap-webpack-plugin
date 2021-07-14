@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+* Fix for webpack 4 pre-4.40 not having `compilation.emitAsset`
+
 ## 1.1
 
 * Plugin source is now TypeScript and type declaration files are included when installed from npm

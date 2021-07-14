@@ -1,0 +1,7 @@
+{
+  "name": "webpack-4-0",
+  "private": true,
+  "dependencies": {
+    "webpack": "4.0.0"
+  }
+}
