@@ -14,6 +14,7 @@ jobs:
             yarn install
             cd test/webpack-3 && yarn install
             cd ../webpack-4 && yarn install
+            cd ../webpack-4-0 && yarn install
             cd ../webpack-5 && yarn install
       - save_cache:
           key: dependency-cache-{{ checksum "yarn.lock" }}-v1

@@ -42,6 +42,19 @@ export function compilationPublicPath(compilation: Compilation): string {
   }
 }
 
+// Helper function to emit an asset to a compilation through either the old or new API.
+export function compilationEmitAsset(
+  compilation: Compilation,
+  file: string,
+  source: sources.Source
+): void {
+  if (compilation.emitAsset) {
+    compilation.emitAsset(file, source);
+  } else {
+    compilation.assets[file] = source;
+  }
+}
+
 // Helper to return an object of attributes combining path and global options.
 export function pathAttributes(
   path: Path,

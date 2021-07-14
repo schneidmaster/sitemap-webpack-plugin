@@ -1,9 +1,10 @@
 import { JSONSchema7 } from "json-schema";
 import { validate } from "schema-utils";
-import { Compiler, Compilation } from "webpack";
+import { Compiler, Compilation, sources } from "webpack";
 import { generateSitemaps } from "./generators";
 import {
   RawSource,
+  compilationEmitAsset,
   compilationPublicPath,
   gzip,
   assertValidChangefreq,
@@ -84,7 +85,8 @@ export default class SitemapWebpackPlugin {
       );
 
       sitemaps.forEach((sitemap, idx) => {
-        compilation.emitAsset(
+        compilationEmitAsset(
+          compilation,
           sitemapFilename(this.filename, "xml", idx),
           new RawSource(sitemap, false)
         );
@@ -106,7 +108,8 @@ export default class SitemapWebpackPlugin {
       const sitemap = sitemaps[idx];
       try {
         const compressed = await gzip(sitemap);
-        compilation.emitAsset(
+        compilationEmitAsset(
+          compilation,
           sitemapFilename(this.filename, "xml.gz", idx),
           new RawSource(compressed, false)
         );
